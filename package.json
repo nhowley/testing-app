@@ -1,0 +1,28 @@
+{
+  "name": "emerald-od",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jordi_escude@bitbucket.org/emeraldstay/emerald-od.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/emeraldstay/emerald-od#readme",
+  "dependencies": {
+    "@sendgrid/mail": "^7.2.5",
+    "axios": "^0.20.0",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.1.0",
+    "express-session": "^1.17.1",
+    "handlebars": "^4.7.6",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
+  }
+}
