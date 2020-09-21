@@ -13,7 +13,7 @@ const app = express()
 // })
 
 const routes = require('./routes/index.js')
-const db = require('./routes/db.js')
+// const db = require('./routes/db.js')
 
 const hbs = exphbs.create({ /* default config */ })
 
@@ -22,7 +22,7 @@ app.set('view engine', 'handlebars')
 app.use(express.static('public'))
 
 routes(app)
-db(app)
+// db(app)
 
 app.listen(port, () => {
   console.log(`Running at http://localhost:${port}`)
