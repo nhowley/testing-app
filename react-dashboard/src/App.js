@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import '../css/dashboard.css'
 import axios from "axios"
-const { DateTime } = require("luxon");
 
 class App extends Component {
     constructor(props) {
@@ -13,32 +12,36 @@ class App extends Component {
 
     componentDidMount = () => {
         console.log("app loaded")
-        // this.getCats()
+        this.getCats()
     }
 
     getCats = async () => {
-        fetch( '/cats', { mode: 'cors' })
-        .then(res => res.json())
-        .then((data) => {
-            this.setState({ 
-                    cats: data
+        axios.get(`/cats`)
+            .then((res) => {
+                this.setState({ 
+                    cats: res.data
                 })
-            console.log("cats", data)
-        })
-        .catch(console.log)
+                
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     render(){
         const { cats } = this.state
+        let catsArr = []
+
+        for (let i = 0; i < cats.length; i++) {
+            catsArr.push(<p key={i}>{cats[i].name} is {cats[i].age}</p>)
+            console.log("cats", cats)
+        }
 
         return(
             <div >
                <h1>CATS</h1>
-               {cats.forEach(cat => {
-                   <p>{cat.name} is {cat.age}</p>
-                   console.log(`${cat.name} is ${cat.age}`)
-                })}
-        </div>
+               {catsArr}
+            </div>
         );
     }
 }
