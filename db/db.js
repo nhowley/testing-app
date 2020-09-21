@@ -4,10 +4,10 @@ const mysql = require('mysql')
 require('dotenv').config()
 
 const connection = mysql.createConnection({
-  host     : process.env.DB_HOST,
-  user     : process.env.DB_USER,
+  host     : 'gnldm1014.siteground.biz',
+  user     : 'umtnndmjmcezv',
   password : process.env.DB_PASS,
-  database : process.env.DB_DATABASE,
+  database : 'db6hextktaa2yb',
 })
 
 connection.connect((err) => {
