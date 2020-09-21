@@ -13,7 +13,7 @@ class App extends Component {
 
     componentDidMount = () => {
         console.log("app loaded")
-        this.getCats()
+        // this.getCats()
     }
 
     getCats = async () => {
