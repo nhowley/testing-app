@@ -11,7 +11,15 @@ require('dotenv').config()
 //   database : 'db6hextktaa2yb',
 // })
 
-const connection = mysql.createConnection(`mysql://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_DATABASE}`);
+const connection = mysql.createConnection(`mysql://${process.env.DB_USER}:${process.env.DB_PASS}@gnldm1014.siteground.biz/${process.env.DB_DATABASE}`);
+
+// const connection = new Pool({
+//   user: 'dbuser',
+//   host: 'database.server.com',
+//   database: 'mydb',
+//   password: 'secretpassword',
+//   port: 3211,
+// })
 
 connection.connect((err) => {
   if (err) {
