@@ -4,7 +4,7 @@ const exphbs = require('express-handlebars')
 const Handlebars = require('handlebars')
 const axios = require('axios')
 const cookieParser = require('cookie-parser')
-const port = 3306
+const port = process.env.PORT || 80
 
 const app = express()
 
