@@ -5,6 +5,7 @@ const db = require('../db/db');
         app.route('/cats').get(async (req, res) => {
             console.log("cats reached")
             let query = 'SELECT * FROM cats' 
+            // let query = 'CREATE TABLE cats ( name VARCHAR(255), age INT );'
             const results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
                 if (err) {
                     reject(err);
