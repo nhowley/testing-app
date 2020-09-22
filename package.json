@@ -1,5 +1,5 @@
 {
-  "name": "emerald-od",
+  "name": "testing-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,11 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://jordi_escude@bitbucket.org/emeraldstay/emerald-od.git"
+    "url": "https://github.com/nhowley/testing-app.git"
   },
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/emeraldstay/emerald-od#readme",
+  "homepage": "https://github.com/nhowley/testing-app.git#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.2.5",
     "axios": "^0.20.0",
