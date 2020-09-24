@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import '../css/dashboard.css'
 import axios from "axios"
+import MacroCalculator from "./Components/MacroCalculator";
 
 class App extends Component {
     constructor(props) {
@@ -39,8 +40,9 @@ class App extends Component {
 
         return(
             <div >
-               <h1>CATS</h1>
-               {catsArr}
+               {/* <h1>CATS</h1>
+               {catsArr} */}
+               <MacroCalculator />
             </div>
         );
     }
