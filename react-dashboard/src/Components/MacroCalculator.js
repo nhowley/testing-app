@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TrainingDaySelect from './TrainingDaySelect'
 import { proteinMultipliers, carbMultipliers, fatMultipliers } from '../macroMultipliers.js'
+import axios from "axios"
 
 class MacroCalculator extends Component {
     constructor(props) {
@@ -14,6 +15,23 @@ class MacroCalculator extends Component {
             carbMultipliers: carbMultipliers,
             fatMultipliers: fatMultipliers
         }
+    }
+
+    componentDidMount= () => {
+        this.getMaintenanceCalories()
+    }
+
+    getMaintenanceCalories = () => {
+        axios.get(`/maintenance`)
+            .then((res) => {
+                this.setState({ 
+                    maintenanceCalories: res.data
+                })
+                
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     setTrainingDays = (e) => {
@@ -81,19 +99,30 @@ class MacroCalculator extends Component {
     }
 
     calculateMaintenance = () => {
-        console.log("weight", this.state.weightKilos)
+        console.log("weight", this.state.weightPounds)
         let weight = this.state.weightPounds
+        this.state.maintenanceCalories.forEach(range => {
+            if (weight > range.bodyweight_min && weight < range.bodyweight_max){
+                console.log("in range", range)
+                this.setState({
+                    clientMaintenanceCalories: range
+                })
+            } else {
+                console.log("not in range", range)
+            }
+        })
 
-        let proteinMin 
     }
 
     render(){
-        const { exerciseDays } = this.state
+        const { exerciseDays, clientMaintenanceCalories } = this.state
         let exerciseDaysArr = []
 
         for (let i = 0; i < exerciseDays; i++) {
             exerciseDaysArr.push(<TrainingDaySelect key={i} i={i} setInfoFromChild={this.setInfoFromChild}/>)
         }
+
+
         return (
             <div>
                 <label htmlFor="weight">Weight</label>
@@ -143,7 +172,7 @@ class MacroCalculator extends Component {
                             </tr>
                             <tr>
                                 <td>Non-training</td>
-                                <td></td>
+                                <td>{clientMaintenanceCalories ? clientMaintenanceCalories.non_training : null}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -152,7 +181,7 @@ class MacroCalculator extends Component {
                             </tr>
                             <tr>
                                 <td>Light</td>
-                                <td></td>
+                                <td>{clientMaintenanceCalories ? clientMaintenanceCalories.light : null}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -161,7 +190,7 @@ class MacroCalculator extends Component {
                             </tr>
                             <tr>
                                 <td>Moderate</td>
-                                <td></td>
+                                <td>{clientMaintenanceCalories ? clientMaintenanceCalories.moderate: null}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -170,7 +199,7 @@ class MacroCalculator extends Component {
                             </tr>
                             <tr>
                                 <td>Hard</td>
-                                <td></td>
+                                <td>{clientMaintenanceCalories ? clientMaintenanceCalories.hard: null}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -179,7 +208,7 @@ class MacroCalculator extends Component {
                             </tr>
                             <tr>
                                 <td>Extra-hard</td>
-                                <td></td>
+                                <td>{clientMaintenanceCalories ? clientMaintenanceCalories.extra_hard: null}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

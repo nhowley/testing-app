@@ -1,11 +1,10 @@
 const db = require('../db/db');
 
 // return all cats in database
-    const cats = (app) => {
-        app.route('/cats').get(async (req, res) => {
-            console.log("cats reached")
-            let query = 'SELECT * FROM cats' 
-            // let query = 'CREATE TABLE cats ( name VARCHAR(255), age INT );'
+    const maintenance = (app) => {
+        app.route('/maintenance').get(async (req, res) => {
+            console.log("maintenance reached")
+            let query = 'SELECT * FROM maintenance_calories' 
             const results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
                 if (err) {
                     reject(err);
@@ -20,5 +19,5 @@ const db = require('../db/db');
 };
 
 module.exports = function routes (app) {
-    cats(app)
+    maintenance(app)
   }
