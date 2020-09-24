@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import TrainingDaySelect from './TrainingDaySelect'
+import { proteinMultipliers, carbMultipliers, fatMultipliers } from '../macroMultipliers.js'
 
 class MacroCalculator extends Component {
     constructor(props) {
@@ -8,7 +9,10 @@ class MacroCalculator extends Component {
             exerciseDays: 2,
             weightEntered: 0,
             goal: '',
-            trainingInfo: []
+            trainingInfo: [],
+            proteinMultipliers: proteinMultipliers,
+            carbMultipliers: carbMultipliers,
+            fatMultipliers: fatMultipliers
         }
     }
 
@@ -52,6 +56,37 @@ class MacroCalculator extends Component {
         })
     }
 
+    calculateMacros = async (e) => {
+        e.preventDefault()
+        console.log("calculating macros...")
+        await this.convertWeight()
+        this.calculateMaintenance()
+
+    }
+
+    convertWeight = () =>{
+        let weightKilos;
+        let weightPounds
+        if(this.state.weightUnits === 'kilos'){
+            weightKilos = this.state.weightEntered
+            weightPounds = Math.round(weightKilos * 2.20462)
+        } else {
+            weightPounds = this.state.weightEntered
+            weightKilos = Math.round(weightPounds * 0.453592)
+        }
+        this.setState({
+            weightKilos: weightKilos,
+            weightPounds: weightPounds
+        })
+    }
+
+    calculateMaintenance = () => {
+        console.log("weight", this.state.weightKilos)
+        let weight = this.state.weightPounds
+
+        let proteinMin 
+    }
+
     render(){
         const { exerciseDays } = this.state
         let exerciseDaysArr = []
@@ -89,8 +124,71 @@ class MacroCalculator extends Component {
                 <br/>
                 <input type="radio" name="goal" id="health" className="ml-2" onChange={(e) => this.setGoal(e)}></input>
                 <label htmlFor="health" className="ml-1">Improve health</label>
+                <br/>
+                <button className="mt-4" onClick={(e) => {this.calculateMacros(e)}}>Submit</button>
 
 
+                <div className="macros mt-4">
+                    <h3>Maintenance Macros</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Training</th>
+                                <th>Calories</th>
+                                <th>Protein Range</th>
+                                <th>Protein Recommended</th>
+                                <th>Carbs Range</th>
+                                <th>Carbs Recommended</th>
+                                <th>Fat</th>
+                            </tr>
+                            <tr>
+                                <td>Non-training</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Light</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Moderate</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Hard</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Extra-hard</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         );
     }
