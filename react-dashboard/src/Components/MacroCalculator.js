@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import TrainingDaySelect from './TrainingDaySelect'
+import MacroTable from './MacroTable'
 import { proteinMultipliers, carbMultipliers, fatMultipliers, newProteinMultipliers, newCarbMultipliers, newFatMultipliers } from '../macroMultipliers.js'
 import axios from "axios"
 
@@ -16,7 +17,12 @@ class MacroCalculator extends Component {
             fatMultipliers: fatMultipliers,
             newProteinMultipliers: newProteinMultipliers,
             newCarbMultipliers: newCarbMultipliers,
-            newFatMultipliers: newFatMultipliers
+            newFatMultipliers: newFatMultipliers,
+            trainingTypes: ["health", "endurance", "team", "strength", "hypocaloric", "hypercaloric"],
+            proteinByTraining: {},
+            carbsByTraining:{},
+            fatByTraining:{},
+            clientMaintenanceCalories: 0
         }
     }
 
@@ -187,35 +193,22 @@ class MacroCalculator extends Component {
             const trainingArray = Object.entries(value);
             const newFat = {}
             trainingArray.forEach(([key2, value2]) => {
-                let recommendedFat = Math.round(value2.recommended * weightPounds)
-                console.log("key2", key2)
                 
                 let caloriesObj = clientMaintenanceCalories
                 const caloriesArray = Object.entries(caloriesObj);
 
                 let calories;
                 caloriesArray.forEach(([key3, value3]) => {
-                    console.log("key3", key3)
                     if(key3 === key2){
                         calories = value3
                     }
                 })
 
-                console.log("caloriesVal", calories)
                 let proteinRec = this.state.proteinByTraining[key][key2].recommended
                 let carbsRec = this.state.carbsByTraining[key][key2].recommended
                 let fatRecCalories = calories - ((proteinRec + carbsRec) * 4)
                 let fatRec = Math.round(fatRecCalories / 9)
-                console.log("key", key)
-                console.log("key2", key2)
-                console.log("proteinRec", proteinRec)
-                console.log("carbsRec", carbsRec)
-                console.log("fatRec", fatRec)
 
-                if(isNaN(fatRec)){
-                    fatRec= 'CCH'
-                }
-                
                 let values = {
                     min: Math.round(value2.min * weightPounds),
                     max: 'CCH',
@@ -228,121 +221,27 @@ class MacroCalculator extends Component {
                 fatByTraining: fatByTraining
             })
         })
+
     }
 
-    calculateMaintenanceMacros = () => {
-        const { weightPounds, proteinMultipliers, carbMultipliers, fatMultipliers, clientMaintenanceCalories } = this.state
+  
 
-        const caloriesArray = Object.entries(clientMaintenanceCalories);
-        
-        caloriesArray.forEach(([key, value]) => {
-        let caloriesKey = `${key}MaintenanceCalories`
-        this.setState({
-                [caloriesKey] : value
-            })
-        });
-
-        const proteinArray = Object.entries(proteinMultipliers);
-        
-        proteinArray.forEach(([key, value]) => {
-        let min = `${key}ProteinMin`
-        let max = `${key}ProteinMax`
-        let recommended = `${key}ProteinRecommended`
-        this.setState({
-                [min] : Math.round(value.min * weightPounds),
-                [max] : Math.round(value.max * weightPounds),
-                [recommended] : Math.round(value.recommended * weightPounds)
-            })
-        });
-
-        const carbsArray = Object.entries(carbMultipliers);
-        
-        carbsArray.forEach(([key, value]) => {
-            let minKey = `${key}CarbsMin`
-            let maxKey = `${key}CarbsMax`
-            let recommendedKey = `${key}CarbsRecommended`
-            
-            let minCarbs = Math.round(value.min * weightPounds)
-            let maxCarbs = Math.round(value.max * weightPounds)
-            let recommendedCarbs = Math.round(value.recommended * weightPounds)
-
-            if(isNaN(value.max)){
-                maxCarbs= 'CCH'
-            }
-
-            if(isNaN(value.recommended)){
-                recommendedCarbs= 'CCH'
-            }
-
-            this.setState({
-                    [minKey] : minCarbs,
-                    [maxKey] : maxCarbs,
-                    [recommendedKey] : recommendedCarbs
-                })
-        });
-
-        const fatArray = Object.entries(fatMultipliers);
-
-        fatArray.forEach(([key, value]) => {
-            let minKey = `${key}FatMin`
-            let maxKey = `${key}FatMax`
-            let recommendedKey = `${key}FatRecommended`
-            
-            let minFat = Math.round(value.min * weightPounds)
-            let maxFat = Math.round(value.max * weightPounds)
-            let recommendedFat = Math.round(value.recommended * weightPounds)
-
-            if(isNaN(value.max)){
-                maxFat= 'CCH'
-            }
-
-            if(isNaN(value.recommended)){
-                let recommendedCarbs = `${key}CarbsRecommended`
-                let carbs = this.state[recommendedCarbs]
-                let recommendedProtein = `${key}ProteinRecommended`
-                let protein = this.state[recommendedProtein]
-
-                const caloriesArray = Object.entries(clientMaintenanceCalories);
-        
-                const newCaloriesArray = []
-                caloriesArray.forEach(([key, value]) => {
-                    if (key !== 'bodyweight_min' && key !== 'bodyweight_max'){
-                        newCaloriesArray.push(value)
-                    }
-                });
-
-                console.log("newCaloriesArray", newCaloriesArray)
-                console.log("protein", protein)
-                console.log("carbs", carbs)
-
-                let recommendedFat = []
-
-                newCaloriesArray.forEach(category => {
-                    let calories = category
-                    console.log("calories", calories)
-                    let fatCalories = calories - ((carbs + protein) * 4)
-                    let fat = Math.round(fatCalories / 9)
-                    recommendedFat.push({[key]:fat})
-                })
-                
-                console.log("fat", recommendedFat)
-            }
-
-            this.setState({
-                    [minKey] : minFat,
-                    [maxKey] : maxFat,
-                    [recommendedKey] : recommendedFat
-                })
-        });
-    }
 
     render(){
-        const { exerciseDays, clientMaintenanceCalories, strengthProteinMax, strengthProteinMin, strengthProteinRecommended, strengthCarbsMin, strengthCarbsMax, strengthCarbsRecommended, strengthFatMin, strengthFatMax, strengthFatRecommended, } = this.state
+        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes } = this.state
         const state = this.state
-        let exerciseDaysArr = []
 
+        // let proteinArray = Object.entries(proteinByTraining);
+
+        let exerciseDaysArr = []
         for (let i = 0; i < exerciseDays; i++) {
             exerciseDaysArr.push(<TrainingDaySelect key={i} i={i} setInfoFromChild={this.setInfoFromChild}/>)
+        }
+
+        let tables = []
+        for (let i = 0; i < trainingTypes.length; i++) {
+            let type = trainingTypes[i]
+            tables.push(<MacroTable type={trainingTypes[i]} protein={proteinByTraining[type]} carbs={carbsByTraining[type]} fat={fatByTraining[type]} calories={clientMaintenanceCalories}></MacroTable>)
         }
 
 
@@ -378,75 +277,8 @@ class MacroCalculator extends Component {
                 <label htmlFor="health" className="ml-1">Improve health</label>
                 <br/>
                 <button className="mt-4" onClick={(e) => {this.calculateMacros(e)}}>Submit</button>
+                {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
 
-
-                <div className="macros mt-4">
-                    <h3>Maintenance Macros - Strength and power</h3>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <th>Training</th>
-                                <th>Calories</th>
-                                <th>Protein Range</th>
-                                <th>Protein Recommended</th>
-                                <th>Carbs Range</th>
-                                <th>Carbs Recommended</th>
-                                <th>Fat Range</th>
-                                <th>Fat recommended</th>
-                            </tr>
-                            <tr>
-                                <td>Non-training</td>
-                                <td>{state.non_trainingMaintenanceCalories ? state.non_trainingMaintenanceCalories : null}</td>
-                                <td>{strengthProteinMin ? strengthProteinMin : null}g - {strengthProteinMax ? strengthProteinMax : null}g</td>
-                                <td>{strengthProteinRecommended ? strengthProteinRecommended : null}g</td>
-                                <td>{strengthCarbsMin ? strengthCarbsMin : null}g - {strengthCarbsMax ? strengthCarbsMax : null}g</td>
-                                <td>{state.restCarbsRecommended ? state.restCarbsRecommended : null}g</td>
-                                <td>{strengthFatMin ? strengthFatMin : null}g - {strengthFatMax ? strengthFatMax : null}g</td>
-                                <td>{strengthFatRecommended ? strengthFatRecommended : null}g</td>
-                            </tr>
-                            <tr>
-                                <td>Light</td>
-                                <td>{state.lightMaintenanceCalories ? state.lightMaintenanceCalories : null}</td>
-                                <td>{strengthProteinMin ? strengthProteinMin : null}g - {strengthProteinMax ? strengthProteinMax : null}g</td>
-                                <td>{strengthProteinRecommended ? strengthProteinRecommended : null}g</td>
-                                <td>{strengthCarbsMin ? strengthCarbsMin : null}g - {strengthCarbsMax ? strengthCarbsMax : null}g</td>
-                                <td>{state.lightCarbsRecommended ? state.lightCarbsRecommended : null}g</td>
-                                <td>{strengthFatMin ? strengthFatMin : null}g - {strengthFatMax ? strengthFatMax : null}g</td>
-                                <td>{strengthFatRecommended ? strengthFatRecommended : null}g</td>
-                            </tr>
-                            <tr>
-                                <td>Moderate</td>
-                                <td>{state.moderateMaintenanceCalories ? state.moderateMaintenanceCalories: null}</td>
-                                <td>{strengthProteinMin ? strengthProteinMin : null}g - {strengthProteinMax ? strengthProteinMax : null}g</td>
-                                <td>{strengthProteinRecommended ? strengthProteinRecommended : null}g</td>
-                                <td>{strengthCarbsMin ? strengthCarbsMin : null}g - {strengthCarbsMax ? strengthCarbsMax : null}g</td>
-                                <td>{state.moderateCarbsRecommended ? state.moderateCarbsRecommended : null}g</td>
-                                <td>{strengthFatMin ? strengthFatMin : null}g - {strengthFatMax ? strengthFatMax : null}g</td>
-                                <td>{strengthFatRecommended ? strengthFatRecommended : null}g</td>
-                            </tr>
-                            <tr>
-                                <td>Hard</td>
-                                <td>{state.hardMaintenanceCalories ? state.hardMaintenanceCalories: null}</td>
-                                <td>{strengthProteinMin ? strengthProteinMin : null}g - {strengthProteinMax ? strengthProteinMax : null}g</td>
-                                <td>{strengthProteinRecommended ? strengthProteinRecommended : null}g</td>
-                                <td>{strengthCarbsMin ? strengthCarbsMin : null}g - {strengthCarbsMax ? strengthCarbsMax : null}g</td>
-                                <td>{state.hardCarbsRecommended ? state.hardCarbsRecommended : null}g</td>
-                                <td>{strengthFatMin ? strengthFatMin : null}g - {strengthFatMax ? strengthFatMax : null}g</td>
-                                <td>{strengthFatRecommended ? strengthFatRecommended : null}g</td>
-                            </tr>
-                            <tr>
-                                <td>Extra-hard</td>
-                                <td>{state.extra_hardMaintenanceCalories ? state.extra_hardMaintenanceCalories: null}</td>
-                                <td>{strengthProteinMin ? strengthProteinMin : null}g - {strengthProteinMax ? strengthProteinMax : null}g</td>
-                                <td>{strengthProteinRecommended ? strengthProteinRecommended : null}g</td>
-                                <td>{strengthCarbsMin ? strengthCarbsMin : null}g - {strengthCarbsMax ? strengthCarbsMax : null}g</td>
-                                <td>{state.extraHardCarbsRecommended ? state.extraHardCarbsRecommended : null}g</td>
-                                <td>{strengthFatMin ? strengthFatMin : null}g - {strengthFatMax ? strengthFatMax : null}g</td>
-                                <td>{strengthFatRecommended ? strengthFatRecommended : null}g</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         );
     }
