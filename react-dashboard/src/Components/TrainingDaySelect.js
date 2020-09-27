@@ -106,6 +106,8 @@ class TrainingDaySelect extends Component {
                             <input type="radio" name={`training-type-${i+1}`} id="strength" onClick={(e)=> this.setWorkoutType(e,i)}></input>
                             <label htmlFor="strength" className="ml-1">Strength and power</label>
                             <br/>
+                            <input type="radio" name={`training-type-${i+1}`} id="other" onClick={(e)=> this.setWorkoutType(e,i)}></input>
+                            <label htmlFor="other" className="ml-1">Other</label>
                         </div> 
                     </div>
                     : null}
@@ -143,6 +145,22 @@ class TrainingDaySelect extends Component {
 
                         <div className="mt-4">
                             <p className="mt-2 font-weight-bold mb-1">Workout 1</p>
+                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="endurance" onClick={(e)=> this.setWorkoutType(e,i)}></input>
+                            <label htmlFor="endurance" className="ml-1">Endurance(hiking, swimming, running, cycling)</label>
+                            <br/>
+                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="team" onClick={(e)=> this.setWorkoutType(e,i)}></input>
+                            <label htmlFor="team" className="ml-1">Team sport</label>
+                            <br/>
+                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="strength" onClick={(e)=> this.setWorkoutType(e,i)}></input>
+                            <label htmlFor="strength" className="ml-1">Strength and power</label>
+                            <br/>
+                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="other" onClick={(e)=> this.setWorkoutType(e,i)}></input>
+                            <label htmlFor="other" className="ml-1">Other</label>
+                            <br/>
+                        </div> 
+
+                        <div className="mt-4">
+                            <p className="mt-2 font-weight-bold mb-1">Workout 2</p>
                             <input type="radio" name={`training-type-${i+1}-workout-2`} id="endurance" onClick={(e)=> this.setWorkoutType(e,i)}></input>
                             <label htmlFor="endurance" className="ml-1">Endurance(hiking, swimming, running, cycling)</label>
                             <br/>
@@ -152,20 +170,8 @@ class TrainingDaySelect extends Component {
                             <input type="radio" name={`training-type-${i+1}-workout-2`} id="strength" onClick={(e)=> this.setWorkoutType(e,i)}></input>
                             <label htmlFor="strength" className="ml-1">Strength and power</label>
                             <br/>
-
-                            
-                        </div> 
-
-                        <div className="mt-4">
-                            <p className="mt-2 font-weight-bold mb-1">Workout 2</p>
-                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="endurance" onClick={(e)=> this.setWorkoutType(e,i)}></input>
-                            <label htmlFor="endurance" className="ml-1">Endurance(hiking, swimming, running, cycling)</label>
-                            <br/>
-                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="team" onClick={(e)=> this.setWorkoutType(e,i)}></input>
-                            <label htmlFor="team" className="ml-1">Team sport</label>
-                            <br/>
-                            <input type="radio" name={`training-type-${i+1}-workout-1`} id="strength" onClick={(e)=> this.setWorkoutType(e,i)}></input>
-                            <label htmlFor="strength" className="ml-1">Strength and power</label>
+                            <input type="radio" name={`training-type-${i+1}-workout-2`} id="other" onClick={(e)=> this.setWorkoutType(e,i)}></input>
+                            <label htmlFor="other" className="ml-1">Other</label>
                             <br/>
                         </div> 
 

@@ -116,3 +116,500 @@ export const fatMultipliers = {
         recommended: 'CCH'
     }
 }
+
+export const newProteinMultipliers = {
+    health: {
+        rest:{
+            min: 0.3,
+            max: 2,
+            recommended: 0.8
+        },
+        light: {
+            min: 0.3,
+            max: 2,
+            recommended: 0.8
+        },
+        moderate: {
+            min: 0.3,
+            max: 2,
+            recommended: 0.8
+        },
+        hard: {
+            min: 0.3,
+            max: 2,
+            recommended: 0.8
+        },
+        extraHard: {
+            min: 0.3,
+            max: 2,
+            recommended: 0.8
+        }
+    },
+    endurance: {
+        rest:{
+            min: 0.5,
+            max: 1,
+            recommended: 0.7
+        },
+        light: {
+            min: 0.5,
+            max: 1,
+            recommended: 0.7
+        },
+        moderate: {
+            min: 0.5,
+            max: 1,
+            recommended: 0.7
+        },
+        hard: {
+            min: 0.5,
+            max: 1,
+            recommended: 0.7
+        },
+        extraHard: {
+            min: 0.5,
+            max: 1,
+            recommended: 0.7
+        }
+    },
+    team: {
+        rest:{
+            min: 0.6,
+            max: 1.5,
+            recommended: 0.8
+        },
+        light: {
+            min: 0.6,
+            max: 1.5,
+            recommended: 0.8
+        },
+        moderate: {
+            min: 0.6,
+            max: 1.5,
+            recommended: 0.8
+        },
+        hard: {
+            min: 0.6,
+            max: 1.5,
+            recommended: 0.8
+        },
+        extraHard: {
+            min: 0.6,
+            max: 1.5,
+            recommended: 0.8
+        }
+    },
+    strength: {
+        rest:{
+            min: 0.7,
+            max: 2,
+            recommended: 1
+        },
+        light: {
+            min: 0.7,
+            max: 2,
+            recommended: 1
+        },
+        moderate: {
+            min: 0.7,
+            max: 2,
+            recommended: 1
+        },
+        hard: {
+            min: 0.7,
+            max: 2,
+            recommended: 1
+        },
+        extraHard: {
+            min: 0.7,
+            max: 2,
+            recommended: 1
+        }
+    },
+    hypocaloric: {
+        rest:{
+            min: 0.8,
+            max: 1.5,
+            recommended: 1
+        },
+        light: {
+            min: 0.8,
+            max: 1.5,
+            recommended: 1
+        },
+        moderate: {
+            min: 0.8,
+            max: 1.5,
+            recommended: 1
+        },
+        hard: {
+            min: 0.8,
+            max: 1.5,
+            recommended: 1
+        },
+        extraHard: {
+            min: 0.8,
+            max: 1.5,
+            recommended: 1
+        }
+    },
+    hypercaloric: {
+        rest:{
+            min: 0.7,
+            max: 1.5,
+            recommended: 1
+        },
+        light: {
+            min: 0.7,
+            max: 1.5,
+            recommended: 1
+        },
+        moderate: {
+            min: 0.7,
+            max: 1.5,
+            recommended: 1
+        },
+        hard: {
+            min: 0.7,
+            max: 1.5,
+            recommended: 1
+        },
+        extraHard: {
+            min: 0.7,
+            max: 1.5,
+            recommended: 1
+        }
+    }
+}
+
+export const newCarbMultipliers = {
+    health:{
+        rest: {
+            min: 0.5,
+            max: 5,
+            recommended: 1
+        },
+        light: {
+            min: 0.5,
+            max: 5,
+            recommended: 1
+        },
+        moderate: {
+            min: 0.5,
+            max: 5,
+            recommended: 1.5
+        },
+        hard: {
+            min: 0.5,
+            max: 5,
+            recommended: 2
+        },
+        extraHard: {
+            min: 2,
+            max: 5,
+            recommended: 2.5
+        }
+    },
+    endurance:{
+        rest: {
+            min: 1.5,
+            max: 5,
+            recommended: 1
+        },
+        light: {
+            min: 0.5,
+            max: 5,
+            recommended: 1
+        },
+        moderate: {
+            min: 1,
+            max: 5,
+            recommended: 1.5
+        },
+        hard: {
+            min: 1.5,
+            max: 5,
+            recommended: 2
+        },
+        extraHard: {
+            min: 2,
+            max: 5,
+            recommended: 2.5
+        }
+    },
+    team:{
+        rest: {
+            min: 1.5,
+            max: 3,
+            recommended: 1
+        },
+        light: {
+            min: 0.5,
+            max: 3,
+            recommended: 1
+        },
+        moderate: {
+            min: 1,
+            max: 3,
+            recommended: 1.5
+        },
+        hard: {
+            min: 1.5,
+            max: 3,
+            recommended: 2
+        },
+        extraHard: {
+            min: 2,
+            max: 3,
+            recommended: 2.5
+        }
+    },
+    strength:{
+        rest: {
+            min: 1,
+            max: 2.5,
+            recommended: 1
+        },
+        light: {
+            min: 0.5,
+            max: 2.5,
+            recommended: 1
+        },
+        moderate: {
+            min: 1,
+            max: 2.5,
+            recommended: 1.5
+        },
+        hard: {
+            min: 1.5,
+            max: 2.5,
+            recommended: 2
+        },
+        extraHard: {
+            min: 2,
+            max: 2.5,
+            recommended: 2.5
+        }
+    },
+    hypocaloric:{
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        light: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    },
+    hypercaloric:{
+        rest: {
+            min: 0.5,
+            max: 5,
+            recommended: 'CCH'
+        },
+        light: {
+            min: 0.5,
+            max: 5,
+            recommended: 'CCH'
+        },
+        moderate: {
+            min: 1,
+            max: 5,
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 1.5,
+            max: 5,
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 2,
+            max: 5,
+            recommended: 'CCH'
+        }
+    }
+}
+
+export const newFatMultipliers = {
+    health: {
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH' 
+        },
+        light : {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate :{
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    },
+    endurance: {
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH' 
+        },
+        light : {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate :{
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    },
+    team: {
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH' 
+        },
+        light : {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate :{
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    },
+    strength: {
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH' 
+        },
+        light : {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate :{
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    },
+    hypocaloric: {
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH' 
+        },
+        light : {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate :{
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    },
+    hypercaloric: {
+        rest: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH' 
+        },
+        light : {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        moderate :{
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        hard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        },
+        extraHard: {
+            min: 0.3,
+            max: 'CCH',
+            recommended: 'CCH'
+        }
+    }
+}
+
+
