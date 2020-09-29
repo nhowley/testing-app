@@ -1,21 +1,61 @@
 import React, { Component } from "react";
+import { carbMultipliers } from "../macroMultipliers";
 
 class MacroTable extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            records: []
+            proteinMultiplier: this.props.proteinMultipliers[this.props.type].rest.recommended
         }
     }
 
+    onChange = (e) => {
+        this.setState({
+            proteinMultiplier: e.target.value
+        })
+    }
+
+    updateProteinMultiplier = (e) => {
+        let type = this.props.type
+        let proteinMultipliers = this.props.proteinMultipliers[type]
+        const proteinArr = Object.entries(proteinMultipliers);
+        let newProteinArr = []
+        proteinArr.forEach(([key, value]) => {
+            value.recommended = Number(this.state.proteinMultiplier)
+            newProteinArr.push([key, value])
+        })
+        let proteinObj = Object.fromEntries(newProteinArr);  
+        let protein = this.props.proteinMultipliers
+        protein[type] = proteinObj
+        this.props.calculateMaintenanceMacros(protein, this.props.carbMultipliers, this.props.fatMultipliers)
+    }
+
+    // updateCarbsMultiplier = (e) => {
+    //     let type = this.props.type
+    //     let proteinMultipliers = this.props.proteinMultipliers[type]
+    //     const proteinArr = Object.entries(proteinMultipliers);
+    //     let newProteinArr = []
+    //     proteinArr.forEach(([key, value]) => {
+    //         value.recommended = Number(this.state.proteinMultiplier)
+    //         newProteinArr.push([key, value])
+    //     })
+    //     let proteinObj = Object.fromEntries(newProteinArr);  
+    //     let protein = this.props.proteinMultipliers
+    //     protein[type] = proteinObj
+    //     this.props.calculateMaintenanceMacros(protein)
+    // }
+
     render(){
-        const { type, protein, carbs, fat, calories } = this.props
-        console.log("type", type)
-        console.log("protein", protein)
-        console.log("calories", calories)
+        const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
         return (
             <div className="macros mt-4">
                     <h3>Maintenance Macros - {type}</h3>
+                    <div className="d-flex">
+                        <h4>Protein Multiplier:</h4>
+                        <input type="number" defaultValue={proteinMultipliers[type].rest.recommended} onChange={(e) => this.onChange(e)}/>
+                        <button className="ml-3" onClick={(e) => this.updateProteinMultiplier(e)}>Save</button>
+                    </div>
+                    
                     <table>
                         <tbody>
                             <tr>
