@@ -3,6 +3,7 @@ import TrainingDaySelect from './TrainingDaySelect'
 import MacroTable from './MacroTable'
 import { proteinMultipliers, carbMultipliers, fatMultipliers } from '../macroMultipliers.js'
 import axios from "axios"
+import { concatSeries } from "async";
 
 class MacroCalculator extends Component {
     constructor(props) {
@@ -15,11 +16,13 @@ class MacroCalculator extends Component {
             proteinMultipliers: proteinMultipliers,
             carbMultipliers: carbMultipliers,
             fatMultipliers: fatMultipliers,
-            trainingTypes: ["health", "endurance", "team", "strength", "hypocaloric", "hypercaloric"],
+            trainingTypes: ["health", "endurance", "team", "strength"],
+            dietTypes: ["hypocaloric", "hypercaloric"],
             proteinByTraining: {},
             carbsByTraining:{},
             fatByTraining:{},
-            clientMaintenanceCalories: 0
+            clientMaintenanceCalories: 0,
+            dailyCalDeficit: 500
         }
     }
 
@@ -81,11 +84,14 @@ class MacroCalculator extends Component {
     }
 
     calculateMacros = async (e) => {
+        const { maintenanceCalories, proteinMultipliers, carbMultipliers, fatMultipliers, clientFatLossCalories } = this.state
         e.preventDefault()
         await this.convertWeight()
-        this.calculateMaintenance()
-        this.calculateMaintenanceMacros(this.state.proteinMultipliers, this.state.carbMultipliers, this.state.fatMultipliers)
-
+        await this.calculateMaintenance(maintenanceCalories)
+        await this.calculateMaintenanceMacros(proteinMultipliers, carbMultipliers, fatMultipliers)
+        let fatLossCalories = await this.calcFatLossCalories()
+        console.log("clientFat", clientFatLossCalories)
+        await this.calcFatLossMacros(proteinMultipliers, carbMultipliers, fatMultipliers, fatLossCalories)
     }
 
     convertWeight = () =>{
@@ -104,10 +110,10 @@ class MacroCalculator extends Component {
         })
     }
 
-    calculateMaintenance = () => {
+    calculateMaintenance = (calories) => {
         console.log("weight", this.state.weightPounds)
         let weight = this.state.weightPounds
-        this.state.maintenanceCalories.forEach(range => {
+        calories.forEach(range => {
             if (weight > range.bodyweight_min && weight < range.bodyweight_max){
                 const caloriesArray = Object.entries(range);
         
@@ -127,6 +133,7 @@ class MacroCalculator extends Component {
                 this.setState({
                     clientMaintenanceCalories: newCalories
                 })
+                return newCalories
             }
         })
     }
@@ -134,9 +141,17 @@ class MacroCalculator extends Component {
     //to do - add possibility to change the protein multiplier once macros are calculated - proteinMultipliers.strength.rest.recommended = {input} 
 
     calculateMaintenanceMacros= async (proteinMultipliers, carbMultipliers, fatMultipliers) => {
-        await this.calcMaintenanceProtein(proteinMultipliers)
-        await this.calcMaintenanceCarbs(carbMultipliers)
-        this.calcMaintenanceFat(fatMultipliers)
+        let proteinByTraining = await this.calcMaintenanceProtein(proteinMultipliers)
+        let carbsByTraining = await this.calcMaintenanceCarbs(carbMultipliers)
+        this.setState({
+            proteinByTraining: proteinByTraining,
+            carbsByTraining: carbsByTraining
+        })
+        let fatByTraining = await this.calcMaintenanceFat(this.state.clientMaintenanceCalories)
+        this.setState({
+            fatByTraining: fatByTraining,
+            
+        })
     }
 
   
@@ -157,10 +172,10 @@ class MacroCalculator extends Component {
                 newProtein[key2] = values
             })
             proteinByTraining[key] = newProtein
-            this.setState({
-                proteinByTraining: proteinByTraining
-            })
+            
         })
+        return proteinByTraining
+        
     }
 
     calcMaintenanceCarbs = () => {
@@ -173,26 +188,29 @@ class MacroCalculator extends Component {
             const newCarbs = {}
             trainingArray.forEach(([key2, value2]) => {
                 let recommendedCarbs = Math.round(value2.recommended * weightPounds)
-
+                let max = Math.round(value2.max * weightPounds)
                 if(isNaN(value2.recommended)){
                     recommendedCarbs= 'CCH'
+                }
+                if(isNaN(value2.max)){
+                    max= 'CCH'
                 }
                 let values = {
                     min: Math.round(value2.min * weightPounds),
                     max: Math.round(value2.max * weightPounds),
-                    recommended: recommendedCarbs
+                    recommended:recommendedCarbs
                 }
                 newCarbs[key2] = values
             })
             carbsByTraining[key] = newCarbs
-            this.setState({
-                carbsByTraining: carbsByTraining
-            })
+            
         })
+        return carbsByTraining
     }
 
-    calcMaintenanceFat = () => {
-        const { weightPounds, fatMultipliers, clientMaintenanceCalories} = this.state
+    // IF hypocaloric, fat should be 0.3 min and what's left should be in carbs
+    calcMaintenanceFat = (caloriesObj) => {
+        const { weightPounds, fatMultipliers} = this.state
         // get fat amounts per activity and per training type
         const fatArray = Object.entries(fatMultipliers);
         let fatByTraining = {}
@@ -201,7 +219,6 @@ class MacroCalculator extends Component {
             const newFat = {}
             trainingArray.forEach(([key2, value2]) => {
                 
-                let caloriesObj = clientMaintenanceCalories
                 const caloriesArray = Object.entries(caloriesObj);
 
                 let calories;
@@ -216,6 +233,10 @@ class MacroCalculator extends Component {
                 let fatRecCalories = calories - ((proteinRec + carbsRec) * 4)
                 let fatRec = Math.round(fatRecCalories / 9)
 
+                if(!isNaN(value.recommended)){
+                    fatRec= 'CCH'
+                }
+
                 let values = {
                     min: Math.round(value2.min * weightPounds),
                     max: 'CCH',
@@ -224,15 +245,75 @@ class MacroCalculator extends Component {
                 newFat[key2] = values
             })
             fatByTraining[key] = newFat
-            this.setState({
-                fatByTraining: fatByTraining
-            })
+           
         })
+        return fatByTraining
+    }
+
+    calcFatLossCalories = async () => {
+        let caloriesArr = Object.entries(this.state.clientMaintenanceCalories);
+        let newCaloriesArr =  caloriesArr.map(([key, value]) => {
+                value = value - this.state.dailyCalDeficit
+                console.log("value", value)
+                return [key,value]
+                
+        })
+        let caloriesObj = Object.fromEntries(newCaloriesArr)
+        console.log("caloriesObj", caloriesObj)
+        this.setState({
+            clientFatLossCalories: caloriesObj
+        })
+        return caloriesObj
     }
 
 
+    calcFatLossMacros = async (proteinMultipliers, carbMultipliers, fatMultipliers, calories) => {
+        let proteinFatLoss = await this.calcMaintenanceProtein(proteinMultipliers)
+        let fatFatLoss =  await this.calcMaintenanceFat(calories)
+        this.setState({
+            proteinFatLoss: proteinFatLoss,
+            fatFatLoss: fatFatLoss,
+        })
+        let carbsFatLoss = await this.calcMaintenanceCarbs(carbMultipliers)
+        this.setState({
+            carbsFatLoss: carbsFatLoss
+        })
+    }
+
+        // IF hypocaloric, fat should be 0.3 min and what's left should be in carbs
+        calcFatLossFat = () => {
+            const { weightPounds, fatMultipliers } = this.state
+            // get fat amounts per activity and per training type
+            const fatArray = Object.entries(fatMultipliers);
+            let fatByTraining = {}
+            fatArray.forEach(([key, value]) => {
+                const trainingArray = Object.entries(value);
+                const newFat = {}
+                trainingArray.forEach(([key2, value2]) => {
+                    let recommendedFat = Math.round(value2.recommended * weightPounds)
+                    let max = Math.round(value2.max * weightPounds)
+                    if(isNaN(value2.recommended)){
+                        recommendedFat= 'CCH'
+                    }
+                    if(isNaN(value2.max)){
+                        max= 'CCH'
+                    }
+                    let values = {
+                        min: Math.round(value2.min * weightPounds),
+                        max: Math.round(value2.max * weightPounds),
+                        recommended:recommendedFat
+                    }
+                    newFat[key2] = values
+                })
+                fatByTraining[key] = newFat
+                
+            })
+            return fatByTraining
+        }
+
+
     render(){
-        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers } = this.state
+        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories } = this.state
         const state = this.state
 
         // let proteinArray = Object.entries(proteinByTraining);
@@ -256,6 +337,19 @@ class MacroCalculator extends Component {
                 calculateMaintenanceMacros={this.calculateMaintenanceMacros}>
                 </MacroTable>)
         }
+
+        // tables.push(
+        //     <MacroTable type="hypocaloric" 
+        //         protein={proteinByTraining.hypocaloric} 
+        //         carbs={carbsByTraining.hypocaloric} 
+        //         fat={fatByTraining.hypocaloric} 
+        //         calories={clientFatLossCalories} 
+        //         proteinMultipliers={proteinMultipliers} 
+        //         carbMultipliers={carbMultipliers}
+        //         fatMultipliers={fatMultipliers}
+        //         calculateMaintenanceMacros={this.calculateMaintenanceMacros}>
+        //     </MacroTable> 
+        // )
 
 
         return (
@@ -291,9 +385,18 @@ class MacroCalculator extends Component {
                 <br/>
                 <button className="mt-4" onClick={(e) => {this.calculateMacros(e)}}>Submit</button>
                 {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
-                <div className="client-results">
-
-                </div>
+                {/* {this.state.clientFatLossCalories ? 
+                    <MacroTable type="hypocaloric" 
+                        protein={proteinByTraining.hypocaloric} 
+                        carbs={carbsByTraining.hypocaloric} 
+                        fat={fatByTraining.hypocaloric} 
+                        calories={clientFatLossCalories} 
+                        proteinMultipliers={proteinMultipliers} 
+                        carbMultipliers={carbMultipliers}
+                        fatMultipliers={fatMultipliers}
+                        calculateMaintenanceMacros={this.calculateMaintenanceMacros}>
+                    </MacroTable> 
+                : null } */}
             </div>
         );
     }
