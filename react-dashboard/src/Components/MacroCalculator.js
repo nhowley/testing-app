@@ -102,8 +102,18 @@ class MacroCalculator extends Component {
        return dailyCalDeficit
     }
 
+    setMuscleGainGoal = (muscleGainGoal) => {
+        let  weeklyCalories = muscleGainGoal * 3500
+        let dailyCalSurplus = weeklyCalories / 7
+        this.setState({
+            dailyCalSurplus: dailyCalSurplus
+        })
+ 
+        return dailyCalSurplus
+     }
+
     calculateMacros = async (e) => {
-        const { maintenanceCalories, proteinMultipliers, carbMultipliers, fatMultipliers, clientFatLossCalories, dailyCalDeficit, fatLossGoal } = this.state
+        const { maintenanceCalories, proteinMultipliers, carbMultipliers, fatMultipliers, clientFatLossCalories, dailyCalDeficit, fatLossGoal, dailyCalSurplus } = this.state
         e.preventDefault()
         await this.convertWeight()
         await this.calculateMaintenance(maintenanceCalories)
@@ -111,7 +121,7 @@ class MacroCalculator extends Component {
         await this.setFatLossGoal(this.state.fatLossGoal)
         let fatLossCalories = await this.calcFatLossCalories(dailyCalDeficit)
         await this.calcFatLossMacros(proteinMultipliers, carbMultipliers, fatMultipliers, fatLossCalories)
-        let muscleGainCalories = await this.calcMuscleGainCalories()
+        let muscleGainCalories = await this.calcMuscleGainCalories(dailyCalSurplus)
         await this.calcMuscleGainMacros(proteinMultipliers, carbMultipliers, fatMultipliers, muscleGainCalories)
     }
 
@@ -167,7 +177,7 @@ class MacroCalculator extends Component {
             proteinByTraining: proteinByTraining,
             carbsByTraining: carbsByTraining
         })
-        let fatByTraining = await this.calcMaintenanceFat(this.state.clientMaintenanceCalories)
+        let fatByTraining = await this.calcMaintenanceFat(this.state.clientMaintenanceCalories, fatMultipliers)
         this.setState({
             fatByTraining: fatByTraining,
             
@@ -229,8 +239,8 @@ class MacroCalculator extends Component {
     }
 
     // IF hypocaloric, fat should be 0.3 min and what's left should be in carbs
-    calcMaintenanceFat = (caloriesObj) => {
-        const { weightPounds, fatMultipliers } = this.state
+    calcMaintenanceFat = (caloriesObj, fatMultipliers) => {
+        const { weightPounds } = this.state
         // get fat amounts per activity and per training type
         const fatArray = Object.entries(fatMultipliers);
         let fatByTraining = {}
@@ -394,7 +404,7 @@ class MacroCalculator extends Component {
             proteinMuscleGain: proteinMuscleGain,
             carbsMuscleGain: carbsMuscleGain
         })
-        let fatMuscleGain = await this.calcMaintenanceFat(calories)
+        let fatMuscleGain = await this.calcMaintenanceFat(calories, fatMultipliers)
         this.setState({
             fatMuscleGain: fatMuscleGain,
             
@@ -402,9 +412,8 @@ class MacroCalculator extends Component {
     }
 
 
-
     render(){
-        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories } = this.state
+        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros } = this.state
         const state = this.state
 
         // let proteinArray = Object.entries(proteinByTraining);
@@ -457,6 +466,8 @@ class MacroCalculator extends Component {
                 fatMultipliers={fatMultipliers}
                 calculateMaintenanceMacros={this.calculateMaintenanceMacros}
                 calcMuscleGainMacros={this.calcMuscleGainMacros}
+                setMuscleGainGoal={this.setMuscleGainGoal}
+                calcMuscleGainCalories={this.calcMuscleGainCalories}
                 >
             </MacroTable> 
         )

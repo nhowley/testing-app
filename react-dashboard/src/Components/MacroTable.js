@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { carbMultipliers, fatMultipliers } from "../macroMultipliers";
+import { carbMultipliers, fatMultipliers, proteinMultipliers } from "../macroMultipliers";
 
 class MacroTable extends Component {
     constructor(props) {
@@ -28,7 +28,11 @@ class MacroTable extends Component {
         })
     }
 
-
+    onChangeCalSurplus = (e) => {
+        this.setState({
+            muscleGainGoal: e.target.value
+        })
+    }
 
     updateProteinMultiplier = (e) => {
         let { type, proteinMultipliers, carbMultipliers, fatMultipliers, calories } = this.props
@@ -47,6 +51,10 @@ class MacroTable extends Component {
         protein[type] = proteinObj
         if (type === "hypocaloric"){
             this.props.calcFatLossMacros(protein, carbMultipliers, fatMultipliers, calories)
+        } else if (type === "hypercaloric") {
+            console.log("hypercaloric reached")
+            console.log("calories", calories)
+            this.props.calcMuscleGainMacros(protein, carbMultipliers, fatMultipliers, calories)
         } else {
             this.props.calculateMaintenanceMacros(protein, carbMultipliers, fatMultipliers)
         }
@@ -74,9 +82,18 @@ class MacroTable extends Component {
         
     }
 
-    updateCalories = async () => {
+    updateFatCalories = async () => {
+        let { proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
         let dailyCalDeficit = await this.props.setFatLossGoal(Number(this.state.fatLossGoal))
-        this.props.calcFatLossCalories(dailyCalDeficit)
+        let fatLossCalories = await this.props.calcFatLossCalories(dailyCalDeficit)
+        this.props.calcFatLossMacros(proteinMultipliers, carbMultipliers, fatMultipliers, fatLossCalories)
+    }
+
+    updateMuscleCalories = async () => {
+        let { proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
+        let dailyCalSurplus = await this.props.setMuscleGainGoal(Number(this.state.muscleGainGoal))
+        let muscleGainCalories = await this.props.calcMuscleGainCalories(dailyCalSurplus)
+        this.props.calcMuscleGainMacros(proteinMultipliers, carbMultipliers, fatMultipliers, muscleGainCalories)
     }
 
     render(){
@@ -99,10 +116,18 @@ class MacroTable extends Component {
                         <div className="d-flex">
                             <h4>Target Loss per week:</h4>
                             <input type="number" defaultValue={1} onChange={(e) => this.onChangeFatDeficit(e)}/>lbs
-                            <button className="ml-3" onClick={(e) => this.updateCalories(e)}>Save</button>
+                            <button className="ml-3" onClick={(e) => this.updateFatCalories(e)}>Save</button>
                         </div>
                     </div>
                     : null }
+
+                    {type === "hypercaloric" ?
+                        <div className="d-flex">
+                            <h4>Target Gain per week:</h4>
+                            <input type="number" defaultValue={1} onChange={(e) => this.onChangeCalSurplus(e)}/>lbs
+                            <button className="ml-3" onClick={(e) => this.updateMuscleCalories(e)}>Save</button>
+                        </div>
+                    : null}
                     
                     <table>
                         <tbody>
