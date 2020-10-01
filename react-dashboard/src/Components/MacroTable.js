@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { carbMultipliers } from "../macroMultipliers";
+import { carbMultipliers, fatMultipliers } from "../macroMultipliers";
 
 class MacroTable extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            proteinMultiplier: this.props.proteinMultipliers[this.props.type].rest.recommended
+            proteinMultiplier: this.props.proteinMultipliers[this.props.type].rest.recommended,
+            fatMultiplier: this.props.fatMultipliers[this.props.type].rest.min
         }
     }
 
@@ -15,35 +16,55 @@ class MacroTable extends Component {
         })
     }
 
+    onChangeFat = (e) => {
+        this.setState({
+            fatMultiplier: e.target.value
+        })
+    }
+
     updateProteinMultiplier = (e) => {
-        let type = this.props.type
-        let proteinMultipliers = this.props.proteinMultipliers[type]
-        const proteinArr = Object.entries(proteinMultipliers);
+        let { type, proteinMultipliers, carbMultipliers, fatMultipliers, calories } = this.props
+        let proteinMultiplierType = proteinMultipliers[type]
+
+        const proteinArr = Object.entries(proteinMultiplierType);
+
         let newProteinArr = []
         proteinArr.forEach(([key, value]) => {
             value.recommended = Number(this.state.proteinMultiplier)
             newProteinArr.push([key, value])
         })
+
         let proteinObj = Object.fromEntries(newProteinArr);  
         let protein = this.props.proteinMultipliers
         protein[type] = proteinObj
-        this.props.calculateMaintenanceMacros(protein, this.props.carbMultipliers, this.props.fatMultipliers)
+        if (type === "hypocaloric"){
+            this.props.calcFatLossMacros(protein, carbMultipliers, fatMultipliers, calories)
+        } else {
+            this.props.calculateMaintenanceMacros(protein, carbMultipliers, fatMultipliers)
+        }
+        
     }
 
-    // updateCarbsMultiplier = (e) => {
-    //     let type = this.props.type
-    //     let proteinMultipliers = this.props.proteinMultipliers[type]
-    //     const proteinArr = Object.entries(proteinMultipliers);
-    //     let newProteinArr = []
-    //     proteinArr.forEach(([key, value]) => {
-    //         value.recommended = Number(this.state.proteinMultiplier)
-    //         newProteinArr.push([key, value])
-    //     })
-    //     let proteinObj = Object.fromEntries(newProteinArr);  
-    //     let protein = this.props.proteinMultipliers
-    //     protein[type] = proteinObj
-    //     this.props.calculateMaintenanceMacros(protein)
-    // }
+    updateFatMultiplier = (e) => {
+        let { type, proteinMultipliers, carbMultipliers, fatMultipliers, calories } = this.props
+        let fatMultiplierFat = fatMultipliers[type]
+
+        const fatArr = Object.entries(fatMultiplierFat);
+
+        let newFatArr = []
+        fatArr.forEach(([key, value]) => {
+            value.recommended = Number(this.state.fatMultiplier)
+            newFatArr.push([key, value])
+        })
+        console.log("newFatArr", newFatArr)
+
+        let fatObj = Object.fromEntries(newFatArr);  
+        let fat = this.props.fatMultipliers
+        fat[type] = fatObj
+        console.log("fat", fat)
+        this.props.calcFatLossMacros(proteinMultipliers, carbMultipliers, fat, calories)
+        
+    }
 
     render(){
         const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
@@ -54,6 +75,11 @@ class MacroTable extends Component {
                         <h4>Protein Multiplier:</h4>
                         <input type="number" defaultValue={proteinMultipliers[type].rest.recommended} onChange={(e) => this.onChange(e)}/>
                         <button className="ml-3" onClick={(e) => this.updateProteinMultiplier(e)}>Save</button>
+                    </div>
+                    <div className="d-flex">
+                        <h4>Fat Multiplier:</h4>
+                        <input type="number" defaultValue={fatMultipliers[type].rest.min} onChange={(e) => this.onChangeFat(e)}/>
+                        <button className="ml-3" onClick={(e) => this.updateFatMultiplier(e)}>Save</button>
                     </div>
                     
                     <table>
