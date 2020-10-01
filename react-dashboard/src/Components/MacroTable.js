@@ -70,17 +70,18 @@ class MacroTable extends Component {
         const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
         return (
             <div className="macros mt-4">
-                    <h3>Maintenance Macros - {type}</h3>
+                    <h3>Macros - {type}</h3>
                     <div className="d-flex">
                         <h4>Protein Multiplier:</h4>
                         <input type="number" defaultValue={proteinMultipliers[type].rest.recommended} onChange={(e) => this.onChange(e)}/>
                         <button className="ml-3" onClick={(e) => this.updateProteinMultiplier(e)}>Save</button>
                     </div>
+                    {type === "hypocaloric" ?
                     <div className="d-flex">
                         <h4>Fat Multiplier:</h4>
                         <input type="number" defaultValue={fatMultipliers[type].rest.min} onChange={(e) => this.onChangeFat(e)}/>
                         <button className="ml-3" onClick={(e) => this.updateFatMultiplier(e)}>Save</button>
-                    </div>
+                    </div> : null }
                     
                     <table>
                         <tbody>

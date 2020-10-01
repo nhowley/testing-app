@@ -422,27 +422,27 @@ export const carbMultipliers = {
         rest: {
             min: 0.5,
             max: 5,
-            recommended: 'CCH'
+            recommended: 1
         },
         light: {
             min: 0.5,
             max: 5,
-            recommended: 'CCH'
+            recommended: 1
         },
         moderate: {
             min: 1,
             max: 5,
-            recommended: 'CCH'
+            recommended: 1.5
         },
         hard: {
             min: 1.5,
             max: 5,
-            recommended: 'CCH'
+            recommended: 2
         },
         extraHard: {
             min: 2,
             max: 5,
-            recommended: 'CCH'
+            recommended: 2.5
         }
     }
 }
