@@ -6,7 +6,7 @@ class MacroTable extends Component {
         super(props)
         this.state = {
             proteinMultiplier: this.props.proteinMultipliers[this.props.type].rest.recommended,
-            fatMultiplier: this.props.fatMultipliers[this.props.type].rest.min
+            fatMultiplier: this.props.fatMultipliers[this.props.type].rest.min,
         }
     }
 
@@ -21,6 +21,14 @@ class MacroTable extends Component {
             fatMultiplier: e.target.value
         })
     }
+
+    onChangeFatDeficit = (e) => {
+        this.setState({
+            fatLossGoal: e.target.value
+        })
+    }
+
+
 
     updateProteinMultiplier = (e) => {
         let { type, proteinMultipliers, carbMultipliers, fatMultipliers, calories } = this.props
@@ -66,6 +74,11 @@ class MacroTable extends Component {
         
     }
 
+    updateCalories = async () => {
+        let dailyCalDeficit = await this.props.setFatLossGoal(Number(this.state.fatLossGoal))
+        this.props.calcFatLossCalories(dailyCalDeficit)
+    }
+
     render(){
         const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
         return (
@@ -77,11 +90,19 @@ class MacroTable extends Component {
                         <button className="ml-3" onClick={(e) => this.updateProteinMultiplier(e)}>Save</button>
                     </div>
                     {type === "hypocaloric" ?
-                    <div className="d-flex">
-                        <h4>Fat Multiplier:</h4>
-                        <input type="number" defaultValue={fatMultipliers[type].rest.min} onChange={(e) => this.onChangeFat(e)}/>
-                        <button className="ml-3" onClick={(e) => this.updateFatMultiplier(e)}>Save</button>
-                    </div> : null }
+                    <div>
+                        <div className="d-flex">
+                            <h4>Fat Multiplier:</h4>
+                            <input type="number" defaultValue={fatMultipliers[type].rest.min} onChange={(e) => this.onChangeFat(e)}/>
+                            <button className="ml-3" onClick={(e) => this.updateFatMultiplier(e)}>Save</button>
+                        </div> 
+                        <div className="d-flex">
+                            <h4>Target Loss per week:</h4>
+                            <input type="number" defaultValue={1} onChange={(e) => this.onChangeFatDeficit(e)}/>lbs
+                            <button className="ml-3" onClick={(e) => this.updateCalories(e)}>Save</button>
+                        </div>
+                    </div>
+                    : null }
                     
                     <table>
                         <tbody>
