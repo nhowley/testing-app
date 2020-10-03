@@ -404,13 +404,54 @@ class MacroCalculator extends Component {
             proteinMuscleGain: proteinMuscleGain,
             carbsMuscleGain: carbsMuscleGain
         })
-        let fatMuscleGain = await this.calcMaintenanceFat(calories, fatMultipliers)
+        let fatMuscleGain = await this.calcMuscleGainFat(calories, fatMultipliers)
         this.setState({
             fatMuscleGain: fatMuscleGain,
             
         })
     }
 
+    calcMuscleGainFat = (caloriesObj, fatMultipliers) => {
+        const { weightPounds } = this.state
+        // get fat amounts per activity and per training type
+        const fatArray = Object.entries(fatMultipliers);
+        let fatMuscleGain = {}
+        fatArray.forEach(([key, value]) => {
+            const trainingArray = Object.entries(value);
+            const newFat = {}
+            trainingArray.forEach(([key2, value2]) => {
+                
+                
+                const caloriesArray = Object.entries(caloriesObj);
+
+                let calories;
+                caloriesArray.forEach(([key3, value3]) => {
+                    if(key3 === key2){
+                        calories = value3
+                    }
+                })
+
+                let proteinRec = this.state.proteinMuscleGain[key][key2].recommended
+                let carbsRec = this.state.carbsMuscleGain[key][key2].recommended
+                let fatRecCalories = calories - ((proteinRec + carbsRec) * 4)
+                let fatRec = Math.round(fatRecCalories / 9)
+
+                if(!isNaN(value.recommended)){
+                    fatRec= 'CCH'
+                }
+
+                let values = {
+                    min: Math.round(value2.min * weightPounds),
+                    max: 'CCH',
+                    recommended: fatRec
+                }
+                newFat[key2] = values
+            })
+            fatMuscleGain[key] = newFat
+           
+        })
+        return fatMuscleGain
+    }
 
     render(){
         const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros } = this.state
