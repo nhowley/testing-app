@@ -96,6 +96,7 @@ class MacroTable extends Component {
         this.props.calcMuscleGainMacros(proteinMultipliers, carbMultipliers, fatMultipliers, muscleGainCalories)
     }
 
+
     render(){
         const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
         return (

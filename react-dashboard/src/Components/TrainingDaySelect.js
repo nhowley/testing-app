@@ -49,7 +49,8 @@ class TrainingDaySelect extends Component {
     }
 
     setWorkoutType = (e,i) => {
-        if(this.state.singleWorkoutType){
+        console.log("workout type reached")
+        if(this.state.singleWorkout){
             this.setState({
                 trainingTypeSingle: e.target.id
             }, () => this.sendInfoToParent(i) )

@@ -16,7 +16,7 @@ class MacroCalculator extends Component {
             proteinMultipliers: proteinMultipliers,
             carbMultipliers: carbMultipliers,
             fatMultipliers: fatMultipliers,
-            trainingTypes: ["health", "endurance", "team", "strength"],
+            trainingTypes: [],
             dietTypes: ["hypocaloric", "hypercaloric"],
             proteinByTraining: {},
             carbsByTraining:{},
@@ -453,6 +453,40 @@ class MacroCalculator extends Component {
         return fatMuscleGain
     }
 
+
+    // onClick submit, check workouts  - we want to know if they have any double workout days and how intense these are to choose the calories needed
+
+    getWorkouts = async (e) => {
+        let singleArr = []
+        let doubleArr = []
+        let trainingTypes = []
+        if (this.state.trainingInfo) {
+            this.state.trainingInfo.forEach(training => {
+                if(training.singleWorkout){
+                    singleArr.push(training)
+                } else if (training.doubleWorkout){
+                    doubleArr.push(training)
+                }
+                if(training.trainingTypeSingle && training.trainingTypeSingle !== "other"){
+                    trainingTypes.push(training.trainingTypeSingle)
+                } else if(training.trainingTypeW1 && training.trainingTypeW1 !== "other"){
+                    trainingTypes.push(training.trainingTypeW1)
+                    trainingTypes.push(training.trainingTypeW2)
+                }
+            })
+        }
+        
+        let uniqueTypes = [...new Set(trainingTypes)];
+
+        this.setState({
+            trainingTypes: uniqueTypes
+        }, () => this.calculateMacros(e))
+
+        console.log("singleArr", singleArr)
+        console.log("doubleArr", doubleArr)
+        console.log("trainingTypes", trainingTypes)
+    }
+
     render(){
         const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros } = this.state
         const state = this.state
@@ -545,20 +579,9 @@ class MacroCalculator extends Component {
                 <input type="radio" name="goal" id="health" className="ml-2" onChange={(e) => this.setGoal(e)}></input>
                 <label htmlFor="health" className="ml-1">Improve health</label>
                 <br/>
-                <button className="mt-4" onClick={(e) => {this.calculateMacros(e)}}>Submit</button>
+                <button className="mt-4" onClick={(e) => {this.getWorkouts(e)}}>Submit</button>
                 {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
-                {/* {this.state.clientFatLossCalories ? 
-                    <MacroTable type="hypocaloric" 
-                        protein={proteinByTraining.hypocaloric} 
-                        carbs={carbsByTraining.hypocaloric} 
-                        fat={fatByTraining.hypocaloric} 
-                        calories={clientFatLossCalories} 
-                        proteinMultipliers={proteinMultipliers} 
-                        carbMultipliers={carbMultipliers}
-                        fatMultipliers={fatMultipliers}
-                        calculateMaintenanceMacros={this.calculateMaintenanceMacros}>
-                    </MacroTable> 
-                : null } */}
+                
             </div>
         );
     }
