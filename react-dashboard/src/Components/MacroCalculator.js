@@ -491,11 +491,11 @@ class MacroCalculator extends Component {
                 intensititesDouble.push("moderate")
             }
 
-            if (training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "moderate"){
+            if ((training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "moderate") || (training.trainingIntensityW1 === "moderate" && training.trainingIntensityW2 === "light")){
                 intensititesDouble.push("moderate")
             }
 
-            if (training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "hard"){
+            if ((training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "hard") || (training.trainingIntensityW1 === "hard" && training.trainingIntensityW2 === "light")){
                 intensititesDouble.push("hard")
             }
 
@@ -503,7 +503,7 @@ class MacroCalculator extends Component {
                 intensititesDouble.push("hard")
             }
 
-            if (training.trainingIntensityW1 === "moderate" && training.trainingIntensityW2 === "hard"){
+            if ((training.trainingIntensityW1 === "moderate" && training.trainingIntensityW2 === "hard") || (training.trainingIntensityW1 === "hard" && training.trainingIntensityW2 === "moderate")){
                 intensititesDouble.push("hard")
             }
 
@@ -519,17 +519,11 @@ class MacroCalculator extends Component {
             trainingIntensitiesDouble: intensititesDouble
         }, () => this.calculateMacros(e))
 
-        console.log("singleArr", singleArr)
-        console.log("doubleArr", doubleArr)
-        console.log("trainingTypes", trainingTypes)
-        console.log("trainingTypeSingle", intensititesSingle)
-        console.log("trainingTypeDouble", intensititesDouble)
-
         //TO DO - highlight correct rows
     }
 
     render(){
-        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros, trainingIntensities, trainingIntensitiesSingle, trainingIntensitiesDouble} = this.state
+        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros, trainingIntensities, trainingIntensitiesSingle, trainingIntensitiesDouble, goal } = this.state
         const state = this.state
 
         // let proteinArray = Object.entries(proteinByTraining);
@@ -556,41 +550,45 @@ class MacroCalculator extends Component {
                 </MacroTable>)
         }
 
-        tables.push(
-            <MacroTable type="hypocaloric" 
-                protein={proteinFatLoss.hypocaloric} 
-                carbs={carbsFatLoss.hypocaloric} 
-                fat={fatFatLoss.hypocaloric} 
-                calories={clientFatLossCalories} 
-                proteinMultipliers={proteinMultipliers} 
-                carbMultipliers={carbMultipliers}
-                fatMultipliers={fatMultipliers}
-                calculateMaintenanceMacros={this.calculateMaintenanceMacros}
-                calcFatLossMacros={this.calcFatLossMacros}
-                setFatLossGoal={this.setFatLossGoal}
-                calcFatLossCalories={this.calcFatLossCalories}
-                trainingIntensities={trainingIntensities}
-                >
-            </MacroTable> 
-        )
+        if(goal === 'lose-fat' || goal === 'lose-weight'){
+            tables.push(
+                <MacroTable type="hypocaloric" 
+                    protein={proteinFatLoss.hypocaloric} 
+                    carbs={carbsFatLoss.hypocaloric} 
+                    fat={fatFatLoss.hypocaloric} 
+                    calories={clientFatLossCalories} 
+                    proteinMultipliers={proteinMultipliers} 
+                    carbMultipliers={carbMultipliers}
+                    fatMultipliers={fatMultipliers}
+                    calculateMaintenanceMacros={this.calculateMaintenanceMacros}
+                    calcFatLossMacros={this.calcFatLossMacros}
+                    setFatLossGoal={this.setFatLossGoal}
+                    calcFatLossCalories={this.calcFatLossCalories}
+                    trainingIntensities={trainingIntensities}
+                    >
+                </MacroTable> 
+            )
+        }
 
-        tables.push(
-            <MacroTable type="hypercaloric" 
-                protein={proteinMuscleGain.hypercaloric} 
-                carbs={carbsMuscleGain.hypercaloric} 
-                fat={fatMuscleGain.hypercaloric} 
-                calories={clientMuscleGainCalories} 
-                proteinMultipliers={proteinMultipliers} 
-                carbMultipliers={carbMultipliers}
-                fatMultipliers={fatMultipliers}
-                calculateMaintenanceMacros={this.calculateMaintenanceMacros}
-                calcMuscleGainMacros={this.calcMuscleGainMacros}
-                setMuscleGainGoal={this.setMuscleGainGoal}
-                calcMuscleGainCalories={this.calcMuscleGainCalories}
-                trainingIntensities={trainingIntensities}
-                >
-            </MacroTable> 
-        )
+        if(goal === 'gain-muscle'){
+            tables.push(
+                <MacroTable type="hypercaloric" 
+                    protein={proteinMuscleGain.hypercaloric} 
+                    carbs={carbsMuscleGain.hypercaloric} 
+                    fat={fatMuscleGain.hypercaloric} 
+                    calories={clientMuscleGainCalories} 
+                    proteinMultipliers={proteinMultipliers} 
+                    carbMultipliers={carbMultipliers}
+                    fatMultipliers={fatMultipliers}
+                    calculateMaintenanceMacros={this.calculateMaintenanceMacros}
+                    calcMuscleGainMacros={this.calcMuscleGainMacros}
+                    setMuscleGainGoal={this.setMuscleGainGoal}
+                    calcMuscleGainCalories={this.calcMuscleGainCalories}
+                    trainingIntensities={trainingIntensities}
+                    >
+                </MacroTable> 
+            )
+        }
 
         let doubleIntensititesArr = []
         {trainingIntensitiesDouble ? trainingIntensitiesDouble.forEach(training => {
@@ -635,13 +633,13 @@ class MacroCalculator extends Component {
                 <label htmlFor="health" className="ml-1">Improve health</label>
                 <br/>
                 <button className="mt-4" onClick={(e) => {this.getWorkouts(e)}}>Submit</button>
-                {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
                 <div className="client-training">
                     <p className="mt-4 h4">Client has {trainingIntensitiesDouble ? trainingIntensitiesDouble.length : null} double training days</p>
                     {doubleIntensititesArr}
                     <p className="mt-4 h4">Client has {trainingIntensitiesSingle ? trainingIntensitiesSingle.length : null} single training days</p>
                     {singleIntensititesArr}
                 </div>
+                {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
             </div>
         );
     }
