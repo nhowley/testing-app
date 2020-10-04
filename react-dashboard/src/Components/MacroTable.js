@@ -98,7 +98,7 @@ class MacroTable extends Component {
 
 
     render(){
-        const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers } = this.props
+        const { type, protein, carbs, fat, calories, proteinMultipliers, carbMultipliers, fatMultipliers, trainingIntensities } = this.props
         return (
             <div className="macros mt-4">
                     <h3>Macros - {type}</h3>
@@ -142,7 +142,7 @@ class MacroTable extends Component {
                                 <th>Fat Range</th>
                                 <th>Fat recommended</th>
                             </tr>
-                            <tr>
+                            <tr className="bg-warning">
                                 <td>Non-training</td>
                                 <td>{calories ? calories.rest : null}</td>
                                 <td>{protein ? protein.rest.min : null}g - {protein ? protein.rest.max : null}g</td>
@@ -152,7 +152,7 @@ class MacroTable extends Component {
                                 <td>{fat ? fat.rest.min : null}g - {fat ? fat.rest.max : null}g</td>
                                 <td>{fat ? fat.rest.recommended : null}g</td>
                             </tr>
-                            <tr>
+                            <tr className={trainingIntensities.includes("light") ? "bg-warning" : "bg-white"}>
                                 <td>Light</td>
                                 <td>{calories ? calories.light : null}</td>
                                 <td>{protein ? protein.light.min : null}g - {protein ? protein.light.max : null}g</td>
@@ -162,7 +162,7 @@ class MacroTable extends Component {
                                 <td>{fat ? fat.light.min : null}g - {fat ? fat.light.max : null}g</td>
                                 <td>{fat ? fat.light.recommended : null}g</td>
                             </tr>
-                            <tr>
+                            <tr className={trainingIntensities.includes("moderate") ? "bg-warning" : "bg-white"}>
                                 <td>Moderate</td>
                                 <td>{calories ? calories.moderate : null}</td>
                                 <td>{protein ? protein.moderate.min : null}g - {protein ? protein.moderate.max : null}g</td>
@@ -172,7 +172,7 @@ class MacroTable extends Component {
                                 <td>{fat ? fat.moderate.min : null}g - {fat ? fat.moderate.max : null}g</td>
                                 <td>{fat ? fat.moderate.recommended : null}g</td>
                             </tr>
-                            <tr>
+                            <tr className={trainingIntensities.includes("hard") ? "bg-warning" : "bg-white"}>
                                 <td>Hard</td>
                                 <td>{calories ? calories.hard : null}</td>
                                 <td>{protein ? protein.hard.min : null}g - {protein ? protein.hard.max : null}g</td>
@@ -182,7 +182,7 @@ class MacroTable extends Component {
                                 <td>{fat ? fat.hard.min : null}g - {fat ? fat.hard.max : null}g</td>
                                 <td>{fat ? fat.hard.recommended : null}g</td>
                             </tr>
-                            <tr>
+                            <tr className={trainingIntensities.includes("extaHard") ? "bg-warning" : "bg-white"}>
                                 <td>Extra-hard</td>
                                 <td>{calories ? calories.extraHard : null}</td>
                                 <td>{protein ? protein.extraHard.min : null}g - {protein ? protein.extraHard.max : null}g</td>

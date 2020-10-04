@@ -31,7 +31,8 @@ class MacroCalculator extends Component {
             fatLossGoal: 1,
             dailyCalDeficit: 500,
             muscleGainGoal: 1,
-            dailyCalSurplus: 500
+            dailyCalSurplus: 500,
+            trainingIntensities: []
         }
     }
 
@@ -460,6 +461,7 @@ class MacroCalculator extends Component {
         let singleArr = []
         let doubleArr = []
         let trainingTypes = []
+
         if (this.state.trainingInfo) {
             this.state.trainingInfo.forEach(training => {
                 if(training.singleWorkout){
@@ -475,20 +477,59 @@ class MacroCalculator extends Component {
                 }
             })
         }
-        
+
         let uniqueTypes = [...new Set(trainingTypes)];
 
+        let intensititesSingle = []
+        singleArr.forEach(training => {
+            intensititesSingle.push(training.trainingIntensitySingle)
+        })
+
+        let intensititesDouble = []
+        doubleArr.forEach(training => {
+            if(training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "light"){
+                intensititesDouble.push("moderate")
+            }
+
+            if (training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "moderate"){
+                intensititesDouble.push("moderate")
+            }
+
+            if (training.trainingIntensityW1 === "light" && training.trainingIntensityW2 === "hard"){
+                intensititesDouble.push("hard")
+            }
+
+            if (training.trainingIntensityW1 === "moderate" && training.trainingIntensityW2 === "moderate"){
+                intensititesDouble.push("hard")
+            }
+
+            if (training.trainingIntensityW1 === "moderate" && training.trainingIntensityW2 === "hard"){
+                intensititesDouble.push("hard")
+            }
+
+            if (training.trainingIntensityW1 === "hard" && training.trainingIntensityW2 === "hard"){
+                intensitites.push("extraHard")
+            }
+        })
+
         this.setState({
-            trainingTypes: uniqueTypes
+            trainingTypes: uniqueTypes,
+            trainingIntensities: intensititesSingle.concat(intensititesDouble),
+            trainingIntensitiesSingle: intensititesSingle,
+            trainingIntensitiesDouble: intensititesDouble
         }, () => this.calculateMacros(e))
 
         console.log("singleArr", singleArr)
         console.log("doubleArr", doubleArr)
         console.log("trainingTypes", trainingTypes)
+        console.log("trainingTypeSingle", intensititesSingle)
+        console.log("trainingTypeDouble", intensititesDouble)
+
+        //TO DO - highlight correct rows
     }
 
     render(){
-        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros } = this.state
+        const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros, trainingIntensities, trainingIntensitiesSingle, trainingIntensitiesDouble} = this.state
         const state = this.state
 
         // let proteinArray = Object.entries(proteinByTraining);
@@ -509,7 +550,9 @@ class MacroCalculator extends Component {
                 proteinMultipliers={proteinMultipliers} 
                 carbMultipliers={carbMultipliers}
                 fatMultipliers={fatMultipliers}
-                calculateMaintenanceMacros={this.calculateMaintenanceMacros}>
+                calculateMaintenanceMacros={this.calculateMaintenanceMacros}
+                trainingIntensities={trainingIntensities}
+                >
                 </MacroTable>)
         }
 
@@ -526,6 +569,7 @@ class MacroCalculator extends Component {
                 calcFatLossMacros={this.calcFatLossMacros}
                 setFatLossGoal={this.setFatLossGoal}
                 calcFatLossCalories={this.calcFatLossCalories}
+                trainingIntensities={trainingIntensities}
                 >
             </MacroTable> 
         )
@@ -543,9 +587,20 @@ class MacroCalculator extends Component {
                 calcMuscleGainMacros={this.calcMuscleGainMacros}
                 setMuscleGainGoal={this.setMuscleGainGoal}
                 calcMuscleGainCalories={this.calcMuscleGainCalories}
+                trainingIntensities={trainingIntensities}
                 >
             </MacroTable> 
         )
+
+        let doubleIntensititesArr = []
+        {trainingIntensitiesDouble ? trainingIntensitiesDouble.forEach(training => {
+            doubleIntensititesArr.push(<p>Intensity: {training}</p>)
+        }) : null}
+
+        let singleIntensititesArr = []
+        {trainingIntensitiesSingle ? trainingIntensitiesSingle.forEach(training => {
+            singleIntensititesArr.push(<p>Intensity: {training}</p>)
+        }) : null}
 
 
         return (
@@ -581,7 +636,12 @@ class MacroCalculator extends Component {
                 <br/>
                 <button className="mt-4" onClick={(e) => {this.getWorkouts(e)}}>Submit</button>
                 {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
-                
+                <div className="client-training">
+                    <p className="mt-4 h4">Client has {trainingIntensitiesDouble ? trainingIntensitiesDouble.length : null} double training days</p>
+                    {doubleIntensititesArr}
+                    <p className="mt-4 h4">Client has {trainingIntensitiesSingle ? trainingIntensitiesSingle.length : null} single training days</p>
+                    {singleIntensititesArr}
+                </div>
             </div>
         );
     }
