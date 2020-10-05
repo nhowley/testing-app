@@ -29,6 +29,7 @@ class App extends Component {
         return(
             <div >
                <MacroCalculator />
+               
             </div>
         );
     }

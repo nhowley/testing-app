@@ -4,6 +4,7 @@ import MacroTable from './MacroTable'
 import { proteinMultipliers, carbMultipliers, fatMultipliers } from '../macroMultipliers.js'
 import axios from "axios"
 import { concatSeries } from "async";
+import { object } from "prop-types";
 
 class MacroCalculator extends Component {
     constructor(props) {
@@ -508,7 +509,7 @@ class MacroCalculator extends Component {
             }
 
             if (training.trainingIntensityW1 === "hard" && training.trainingIntensityW2 === "hard"){
-                intensitites.push("extraHard")
+                intensititesDouble.push("extraHard")
             }
         })
 
@@ -521,6 +522,111 @@ class MacroCalculator extends Component {
 
         //TO DO - highlight correct rows
     }
+
+    saveToDatabase = () => {
+        let carbsStrength = this.state.carbsByTraining.strength
+        let proteinStrength = this.state.proteinByTraining.strength
+        let fatStrength = this.state.fatByTraining.strength
+
+        let strengthArr = []
+        strengthArr.push({carbs: carbsStrength})
+        strengthArr.push({protein: proteinStrength})
+        strengthArr.push({fat: fatStrength})
+
+        var i = 0
+
+        console.log("strengthArr", strengthArr)
+
+        let newArr = []
+    
+        strengthArr.forEach((key) => {
+            let macroArr = Object.entries(key)
+            
+            macroArr.forEach(([key2, value2]) => {
+                let rangeArr = Object.entries(value2)
+                
+                rangeArr.forEach(([key3, value3]) => {
+                    console.log("key3", key3)
+                    console.log("value3", value3)
+                    console.log(`${key2}Min`)
+                    let newKeyMin = `${key2}Min`
+                    let newKeyMax= `${key2}Max`
+                    let newKeyRecommended= `${key2}Recommended`
+                    let obj = {}
+                            obj[key3]= {
+                                    [newKeyMin]: value3.min,
+                                    [newKeyMax]: value3.max,
+                                    [newKeyRecommended]: value3.recommended
+
+                            }
+                    newArr.push(obj)
+                    
+                    // let trainingTypeArr = Object.entries(value3)
+                    // trainingTypeArr.forEach(([key4,value4]) => {
+                    //     console.log("key4", key4)
+                    //     console.log("value4", value4)
+                    //     newArr.push(
+                    //         {
+                    //             [key3]: {
+                    //                     [newKey]: value4
+                    //             }
+                    //         }
+                    //     )
+                    // })
+                console.log("newArr", newArr)
+                
+            })
+
+
+
+            const object = Object.assign({}, ...newArr)
+            console.log("object", object)
+
+            let newObj = { "rest":{}, "light":{}, "moderate":{}, "hard":{}, "extraHard":{} }
+            let extraNewArr = Object.entries(newArr)
+            extraNewArr.forEach(([key, value]) => {
+                console.log("value", value)
+                let values = Object.entries(value)
+                values.forEach(([key2, value2]) => {
+                    console.log("key2", key2)
+
+                    console.log("value2", value2)
+                    let values2 = Object.entries(value2)
+                    values2.forEach(([key3, value3]) =>{
+                        console.log("key3", key3)
+                            newObj[key2][key3]= value3
+                        
+                    })
+                    
+                 })
+            })
+            
+                
+
+            console.log("newObj", newObj)
+
+            
+            // key.forEach(([key2, value2]) => {
+            //     console.log(`${key}Min`)
+                // let query = `INSERT INTO recommendations (Id,Name,IsActive)`
+                // query += ` VALUES ("${company.Id}", "${company.Name}", "${company.IsActive}"`
+                // query += `)`
+                // query += ` ON DUPLICATE KEY UPDATE Id="${company.Id}", Name="${company.Name}", IsActive="${company.IsActive}"`
+                // // console.log(query)
+                // let results = await new Promise((resolve, reject) => dbod.query(query, (err, Qresults) => {
+                //     if (err) {
+                //         console.log('🐣')
+                //         reject(err)
+                //     } else {
+                //         console.log('🥚')
+                //         resolve(Qresults)
+                //     }
+                // }))
+        //     }
+        // )
+            })
+    })}
+    
 
     render(){
         const { exerciseDays, proteinByTraining, carbsByTraining, fatByTraining, clientMaintenanceCalories, trainingTypes, proteinMultipliers, clientFatLossCalories, proteinFatLoss, carbsFatLoss, fatFatLoss, clientMuscleGainCalories, proteinMuscleGain, carbsMuscleGain, fatMuscleGain, calcFatLossCalories, calcFatLossMacros, calcMuscleGainMacros, trainingIntensities, trainingIntensitiesSingle, trainingIntensitiesDouble, goal } = this.state
@@ -640,6 +746,7 @@ class MacroCalculator extends Component {
                     {singleIntensititesArr}
                 </div>
                 {Object.keys(proteinByTraining).length !== 0 && proteinByTraining.constructor === Object ? tables : null }
+                <button onClick={this.saveToDatabase}>Save</button>
             </div>
         );
     }
