@@ -42,6 +42,7 @@ worksheets.forEach((worksheet) => {
         //if key contains gsx then return the whole object for that key
         const filteredCells = Object.keys(cell).filter((k) => { return ~k.indexOf("gsx") === -1 })
         console.log("filteredCells", filteredCells)
+        // filteredCells.shift()
           
           Object.keys(cell)
             .filter(key => !filteredCells.includes(key))
