@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios"
 import json from "../../public/reports/daily.json";
+import DayPicker from './Components/DayPicker'
 
 class App extends Component {
     constructor(props) {
@@ -68,6 +69,7 @@ class App extends Component {
                 <label htmlFor="email">Client email</label>
                 <br/>
                <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
+               <DayPicker />
                <button onClick={() => {this.getClientResults()}}>Submit</button>
             </div>
         );
