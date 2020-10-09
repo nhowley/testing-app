@@ -12,39 +12,6 @@ class App extends Component {
 
     componentDidMount = () => {
         console.log("app loaded")
-        // this.getJSONResults()
-    }
-
-    getJSONResults = () => {
-        let dataArr = Object.entries(json)
-        console.log("dataArr", dataArr)
-        let newdataArr = {}
-        
-        // let data = []
-        dataArr.forEach(([key, value]) => {
-            console.log("key", value)
-            let data = {}
-            Object.entries(value).forEach(([key2, value2], index) => {
-                console.log("key2", key2)
-                if(Object.keys(data).length === 0){
-                    console.log("empty")
-                    data[index] = value2
-                } else {
-                    let newIndex = index + 1
-                    console.log("newIndex", newIndex)
-                    data[newIndex] = value2
-                }
-                console.log("data", data)
-                
-                // data.push(value2)
-                newdataArr[key2] = data
-            })
-            
-        });
-        console.log("newDataArr", newdataArr)
-        this.setState({
-            JSONResults: newdataArr
-        })
     }
 
     updateEmail = (e)=>{
@@ -55,14 +22,52 @@ class App extends Component {
 
     getClientResults = (e) => {
         console.log("time to get some results for", this.state.email)
+        let email = this.state.email
+
+        let dataArr = Object.entries(this.state.JSONResults)
+        console.log("dataArr", dataArr)
+        let newdataArr = {}
+        let data = {}
+        // let data = []
+        dataArr.forEach(([key, value], index) => {
+            console.log("key", value)
+            
+            Object.entries(value).forEach(([key2, value2]) => {
+                console.log("key2", key2)
+                if (key2 === email){
+                    data[index] = value2
+                    newdataArr[key2] = data
+                }
+                console.log("data", data)
+                // data.push(value2)
+            })
+        });
+        console.log("newDataArr", newdataArr)
+        let datesArray = this.datesArray(newdataArr[email])
+        console.log("datesArray", datesArray)
+        this.setState({
+            clientReports: newdataArr,
+            datesArray: datesArray
+        })
+    }
+
+    datesArray = (data) => {
+        console.log("datesArray reached")
+        let dates = []
+        Object.entries(data).forEach(([key, report]) =>{
+            console.log("report", report)
+            dates.push(report.dateofreview)
+        })
+        return dates
     }
 
     render(){
 
         return(
             <div >
-               <h1>REACT REACHED</h1>
-               <input type="email" onChange={(e) => {this.updateEmail(e)}}></input>
+                <label htmlFor="email">Client email</label>
+                <br/>
+               <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
                <button onClick={() => {this.getClientResults()}}>Submit</button>
             </div>
         );
