@@ -3,12 +3,19 @@ import axios from "axios"
 import json from "../../public/reports/daily.json";
 import DayPicker from './Components/DayPicker'
 import moment from 'moment'
+import LineGraph from "./Components/LineGraph";
+import PieChart from "./Components/PieChart";
+
+import { occupancyDataMonth } from './MockData'
 
 class App extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            JSONResults: json
+            JSONResults: json,
+            data: occupancyDataMonth,
+            goals: [],
+            goalsArrLength: []
         }
     }
 
@@ -25,13 +32,21 @@ class App extends Component {
     getClientResults = async (e) => {
         let allClientReports = await this.getClientReportsByEmail()
         let clientReportsInRange = await this.getClientReportsInRange(allClientReports)
-        
+        let datesArray = await this.datesArray(clientReportsInRange)
+        let goals = await this.getGoals(clientReportsInRange)
+        // data should be number of times the number appears
+       let goalsArrLength = this.getGoalsFrequency(goals)
+
+        console.log("goalsArrLength", goalsArrLength)
+        console.log("datesArray", datesArray)
          // let datesArray = this.datesArray(newdataArr[email])
 
         this.setState({
             allClientReports: allClientReports,
-            clientReportsInRange: clientReportsInRange
-            // datesArray: datesArray
+            clientReportsInRange: clientReportsInRange,
+            datesArray: datesArray,
+            goals: goals,
+            goalsArrLength: goalsArrLength
         })
 
     }
@@ -110,17 +125,66 @@ class App extends Component {
         }
         return arr;
       }
+
+      getGoals = (reports) => {
+        let goals = []
+        reports.forEach(report => {
+            let res = report.goal.charAt(0);
+            goals.push(res)
+        })
+        console.log("goals", goals)
+        return goals
+      }
+
+      getGoalsFrequency = (goals) => {
+        let goalData = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: []
+        }
+
+        goals.forEach(goal => {
+            if(goal === "1"){
+                goalData[1].push(goal)
+            } else if(goal === "2"){
+                goalData[2].push(goal)
+            }
+            else if(goal === "3"){
+                goalData[3].push(goal)
+            }
+            else if(goal === "4"){
+                goalData[4].push(goal)
+            }
+            else if(goal === "5"){
+                goalData[5].push(goal)
+            }
+        })
+
+        let goalsArrLength = []
+
+        Object.entries(goalData).forEach(([key, value]) => {
+            goalsArrLength.push(value.length)
+        })
+
+        return goalsArrLength
+      }
   
 
     render(){
-
+        const { datesArray, data, goals, goalsArrLength } = this.state
         return(
             <div >
                 <label htmlFor="email">Client email</label>
                 <br/>
-               <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
-               <DayPicker setDatesSelected={this.setDatesSelected}/>
-               <button onClick={() => {this.getClientResults()}}>Submit</button>
+                <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
+                <DayPicker setDatesSelected={this.setDatesSelected}/>
+                <button onClick={() => {this.getClientResults()}}>Submit</button>
+                <PieChart goals={goals} goalsArrLength={goalsArrLength}/>
+                <LineGraph datesArray={datesArray} data={data[0].data} borderColor={data[0].backgroundColor} />
+
+                {/* Goal - pie chart, feel - line graph , sleep - bar chart, workouts - list number of workout days and workout types - pie chart maybe?, list positives, list additional workout comments, list additional comments */}
             </div>
         );
     }
