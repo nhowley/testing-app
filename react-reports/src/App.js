@@ -46,6 +46,8 @@ class App extends Component {
         this.getHoursSleep(clientReportsInRange)
         this.getWorkouts(clientReportsInRange)
         let positives = this.getPositives(clientReportsInRange)
+        let workoutComments = this.getWorkoutComments(clientReportsInRange)
+        let additionalComments = this.getAdditionalComments(clientReportsInRange)
 
         this.setState({
             allClientReports: allClientReports,
@@ -53,7 +55,9 @@ class App extends Component {
             datesArray: datesArray,
             goals: goals,
             goalsArrLength: goalsArrLength,
-            positives: positives
+            positives: positives,
+            workoutComments: workoutComments,
+            additionalComments: additionalComments
         })
 
     }
@@ -255,9 +259,26 @@ class App extends Component {
         return positives
       }
 
+      getWorkoutComments = (reports) => {
+        console.log("get workout comments")
+        let workoutComments= []
+        reports.forEach(report => {
+            workoutComments.push([report.dateofreview, report.additionalworkoutcomments])
+        })
+        return workoutComments
+      }
+
+      getAdditionalComments = (reports) => {
+        console.log("get additional comments")
+        let additionalComments= []
+        reports.forEach(report => {
+            additionalComments.push([report.dateofreview, report.anyadditionalcomments])
+        })
+        return additionalComments
+      }
 
     render(){
-        const { datesArray, data, goals, goalsArrLength, goalLabels, datesFilled, hoursSleep, workoutsArrLength, positives } = this.state
+        const { datesArray, data, goalsArrLength, datesFilled, hoursSleep, workoutsArrLength, positives, workoutComments, additionalComments } = this.state
         return(
             <div >
                 <label htmlFor="email">Client email</label>
@@ -275,6 +296,26 @@ class App extends Component {
                         <div key={index}>
                             <p>{positive[0]}</p>
                             <p>{positive[1]}</p>
+                        </div>
+                    ) : null}
+                </div>
+
+                <div className="workout-comments">
+                    <h3>Workout Comments</h3>
+                    {workoutComments ? workoutComments.map((comment, index) => 
+                        <div key={index}>
+                            <p>{comment[0]}</p>
+                            <p>{comment[1]}</p>
+                        </div>
+                    ) : null}
+                </div>
+
+                <div className="additional-comments">
+                    <h3>Additional Comments</h3>
+                    {additionalComments ? additionalComments.map((comment, index) => 
+                        <div key={index}>
+                            <p>{comment[0]}</p>
+                            <p>{comment[1]}</p>
                         </div>
                     ) : null}
                 </div>
