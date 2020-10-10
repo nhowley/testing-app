@@ -18,20 +18,23 @@ export default class LineGraph extends Component {
         const myChartRef = this.chartRef.current.getContext("2d");
         
         new Chart(myChartRef, {
-            type: 'pie',
+            type: 'bar',
             data: {
-              labels: this.props.labels,
-              datasets: [{
-                label: this.props.title,
-                backgroundColor: this.props.colours,
-                data: this.props.data
-              }]
+            labels: this.props.datesSleep,
+            datasets: [
+                {
+                label: "Hours of Sleep",
+                backgroundColor: "#3e95cd",
+                data: this.props.hoursSleep
+                }
+            ]
             },
             options: {
-              title: {
+            legend: { display: false },
+            title: {
                 display: true,
-                text: this.props.title
-              }
+                text: 'Hours of Sleep this week'
+            }
             }
         });
     }

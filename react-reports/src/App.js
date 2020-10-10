@@ -5,6 +5,8 @@ import DayPicker from './Components/DayPicker'
 import moment from 'moment'
 import LineGraph from "./Components/LineGraph";
 import PieChart from "./Components/PieChart";
+import BarChart from "./Components/BarChart";
+import { goalLabels, goalColours, goalTitle, workoutsLabels, workoutsColours, workoutsTitle } from './chartData'
 
 import { occupancyDataMonth } from './MockData'
 
@@ -15,7 +17,13 @@ class App extends Component {
             JSONResults: json,
             data: occupancyDataMonth,
             goals: [],
-            goalsArrLength: []
+            goalsArrLength: [],
+            datesSleep: [],
+            hoursSleep: [],
+            goalLabels: goalLabels,
+            goalColours: goalColours,
+            goalTitle: goalTitle,
+            workoutsArrLength: []
         }
     }
 
@@ -34,19 +42,16 @@ class App extends Component {
         let clientReportsInRange = await this.getClientReportsInRange(allClientReports)
         let datesArray = await this.datesArray(clientReportsInRange)
         let goals = await this.getGoals(clientReportsInRange)
-        // data should be number of times the number appears
-       let goalsArrLength = this.getGoalsFrequency(goals)
-
-        console.log("goalsArrLength", goalsArrLength)
-        console.log("datesArray", datesArray)
-         // let datesArray = this.datesArray(newdataArr[email])
+        let goalsArrLength = await this.getGoalsFrequency(goals)
+        this.getHoursSleep(clientReportsInRange)
+        this.getWorkouts(clientReportsInRange)
 
         this.setState({
             allClientReports: allClientReports,
             clientReportsInRange: clientReportsInRange,
             datesArray: datesArray,
             goals: goals,
-            goalsArrLength: goalsArrLength
+            goalsArrLength: goalsArrLength,
         })
 
     }
@@ -170,10 +175,83 @@ class App extends Component {
 
         return goalsArrLength
       }
+
+      getHoursSleep = (reports) => {
+          console.log("hours sleep reached")
+        let dates = []
+        let sleep = []
+
+        reports.forEach(report =>{
+            console.log("report", report)
+            dates.push(report.dateofreview)
+            sleep.push(report.hoursSleep)
+        })
+        
+        this.setState({
+            datesSleep: dates,
+            hoursSleep: sleep
+        })
+      }
+
+      getWorkouts = (reports) => {
+        console.log("get workouts")
+        let workouts = []
+
+        reports.forEach(report =>{
+            if(report.exerciseIntensity.includes("Rest day")){
+                workouts.push("Rest")
+            } else if(report.exerciseIntensity.includes("Light")){
+                workouts.push("Light")
+            } else if(report.exerciseIntensity.includes("Moderate")){
+                workouts.push("Moderate")
+            } else if(report.exerciseIntensity.includes("Hard")){
+                workouts.push("Hard")
+            }
+        })
+
+        this.setState({
+            daysWorkouts: workouts.length
+        })
+
+
+        let workoutData = {
+            Rest: [],
+            Light: [],
+            Moderate: [],
+            Hard: []
+        }
+
+        workouts.forEach(workout => {
+            if(workout === "Rest"){
+                workoutData.Rest.push(workout)
+            } else if(workout === "Light"){
+                workoutData.Light.push(workout)
+            }
+            else if(workout === "Moderate"){
+                workoutData.Moderate.push(workout)
+            }
+            else if(workout === "Hard"){
+                workoutData.Hard.push(workout)
+            }
+        })
+
+        console.log("workouts", workouts)
+        console.log("workoutData", workoutData)
+
+        let workoutsArrLength = []
+
+        Object.entries(workoutData).forEach(([key, value]) => {
+            workoutsArrLength.push(value.length)
+        })
+
+        this.setState({
+            workoutsArrLength: workoutsArrLength
+        })
+      }
   
 
     render(){
-        const { datesArray, data, goals, goalsArrLength } = this.state
+        const { datesArray, data, goals, goalsArrLength, goalLabels, datesSleep, hoursSleep, workoutsArrLength } = this.state
         return(
             <div >
                 <label htmlFor="email">Client email</label>
@@ -181,8 +259,10 @@ class App extends Component {
                 <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
                 <DayPicker setDatesSelected={this.setDatesSelected}/>
                 <button onClick={() => {this.getClientResults()}}>Submit</button>
-                <PieChart goals={goals} goalsArrLength={goalsArrLength}/>
+                <PieChart data={goalsArrLength} labels={goalLabels} colours={goalColours} title={goalTitle}/>
                 <LineGraph datesArray={datesArray} data={data[0].data} borderColor={data[0].backgroundColor} />
+                <BarChart datesSleep={datesSleep} hoursSleep={hoursSleep}/>
+                <PieChart data={workoutsArrLength} labels={workoutsLabels} colours={workoutsColours} title={workoutsTitle}/>
 
                 {/* Goal - pie chart, feel - line graph , sleep - bar chart, workouts - list number of workout days and workout types - pie chart maybe?, list positives, list additional workout comments, list additional comments */}
             </div>
