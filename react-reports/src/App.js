@@ -18,7 +18,7 @@ class App extends Component {
             data: occupancyDataMonth,
             goals: [],
             goalsArrLength: [],
-            datesSleep: [],
+            datesFilled: [],
             hoursSleep: [],
             goalLabels: goalLabels,
             goalColours: goalColours,
@@ -45,6 +45,7 @@ class App extends Component {
         let goalsArrLength = await this.getGoalsFrequency(goals)
         this.getHoursSleep(clientReportsInRange)
         this.getWorkouts(clientReportsInRange)
+        let positives = this.getPositives(clientReportsInRange)
 
         this.setState({
             allClientReports: allClientReports,
@@ -52,6 +53,7 @@ class App extends Component {
             datesArray: datesArray,
             goals: goals,
             goalsArrLength: goalsArrLength,
+            positives: positives
         })
 
     }
@@ -188,7 +190,7 @@ class App extends Component {
         })
         
         this.setState({
-            datesSleep: dates,
+            datesFilled: dates,
             hoursSleep: sleep
         })
       }
@@ -213,7 +215,6 @@ class App extends Component {
             daysWorkouts: workouts.length
         })
 
-
         let workoutData = {
             Rest: [],
             Light: [],
@@ -234,10 +235,6 @@ class App extends Component {
                 workoutData.Hard.push(workout)
             }
         })
-
-        console.log("workouts", workouts)
-        console.log("workoutData", workoutData)
-
         let workoutsArrLength = []
 
         Object.entries(workoutData).forEach(([key, value]) => {
@@ -249,9 +246,18 @@ class App extends Component {
         })
       }
   
+      getPositives = (reports) => {
+        console.log("get positives")
+        let positives= []
+        reports.forEach(report => {
+            positives.push([report.dateofreview, report.positives])
+        })
+        return positives
+      }
+
 
     render(){
-        const { datesArray, data, goals, goalsArrLength, goalLabels, datesSleep, hoursSleep, workoutsArrLength } = this.state
+        const { datesArray, data, goals, goalsArrLength, goalLabels, datesFilled, hoursSleep, workoutsArrLength, positives } = this.state
         return(
             <div >
                 <label htmlFor="email">Client email</label>
@@ -261,8 +267,17 @@ class App extends Component {
                 <button onClick={() => {this.getClientResults()}}>Submit</button>
                 <PieChart data={goalsArrLength} labels={goalLabels} colours={goalColours} title={goalTitle}/>
                 <LineGraph datesArray={datesArray} data={data[0].data} borderColor={data[0].backgroundColor} />
-                <BarChart datesSleep={datesSleep} hoursSleep={hoursSleep}/>
+                <BarChart datesFilled={datesFilled} hoursSleep={hoursSleep}/>
                 <PieChart data={workoutsArrLength} labels={workoutsLabels} colours={workoutsColours} title={workoutsTitle}/>
+                <div className="positives">
+                    <h3>Positives</h3>
+                    {positives ? positives.map((positive, index) => 
+                        <div key={index}>
+                            <p>{positive[0]}</p>
+                            <p>{positive[1]}</p>
+                        </div>
+                    ) : null}
+                </div>
 
                 {/* Goal - pie chart, feel - line graph , sleep - bar chart, workouts - list number of workout days and workout types - pie chart maybe?, list positives, list additional workout comments, list additional comments */}
             </div>

@@ -20,7 +20,7 @@ export default class LineGraph extends Component {
         new Chart(myChartRef, {
             type: 'bar',
             data: {
-            labels: this.props.datesSleep,
+            labels: this.props.datesFilled,
             datasets: [
                 {
                 label: "Hours of Sleep",
