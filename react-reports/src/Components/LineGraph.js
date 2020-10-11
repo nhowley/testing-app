@@ -25,23 +25,39 @@ export default class LineGraph extends Component {
                 datasets: [
                     {
                         label: "Feeling",
-                        data: [4, 5, 4],
+                        data: this.props.data,
+                        fill: false,
                         borderColor: this.props.borderColor
                     }
                 ]
             },
             options: {
 
-                //Customize chart options
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'General feeling'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            stepSize: 1,
+                            min: 0,
+                            max: 5
+                        }
+                    }]
+                }
             }
         });
     }
     render() {
         return (
-            <div className="mt-4">
+            <div className="mt-4 bg-white p-4">
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
+                    width="400px"
+                    height="300px"
                 />
             </div>
         )

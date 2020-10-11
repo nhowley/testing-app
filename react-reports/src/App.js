@@ -15,6 +15,7 @@ class App extends Component {
         super(props)
         this.state = {
             JSONResults: json,
+            showFilters: true,
             data: occupancyDataMonth,
             goals: [],
             goalsArrLength: [],
@@ -23,7 +24,8 @@ class App extends Component {
             goalLabels: goalLabels,
             goalColours: goalColours,
             goalTitle: goalTitle,
-            workoutsArrLength: []
+            workoutsArrLength: [],
+            feeling: []
         }
     }
 
@@ -45,6 +47,7 @@ class App extends Component {
         let goalsArrLength = await this.getGoalsFrequency(goals)
         this.getHoursSleep(clientReportsInRange)
         this.getWorkouts(clientReportsInRange)
+        this.getFeeling(clientReportsInRange)
         let positives = this.getPositives(clientReportsInRange)
         let workoutComments = this.getWorkoutComments(clientReportsInRange)
         let additionalComments = this.getAdditionalComments(clientReportsInRange)
@@ -58,8 +61,7 @@ class App extends Component {
             positives: positives,
             workoutComments: workoutComments,
             additionalComments: additionalComments
-        })
-
+        }, () => {this.hideFilters()})
     }
 
     getClientReportsByEmail = () => {
@@ -135,6 +137,18 @@ class App extends Component {
           dt.setDate(dt.getDate() + 1);
         }
         return arr;
+      }
+
+      getFeeling = (reports) => {
+        let feeling = []
+
+        reports.forEach(report =>{
+            feeling.push(report.general)
+        })
+        
+        this.setState({
+            feeling: feeling
+        })
       }
 
       getGoals = (reports) => {
@@ -277,47 +291,71 @@ class App extends Component {
         return additionalComments
       }
 
+      hideFilters = () => {
+          this.setState({
+              showFilters: false
+          })
+      }
+
     render(){
-        const { datesArray, data, goalsArrLength, datesFilled, hoursSleep, workoutsArrLength, positives, workoutComments, additionalComments } = this.state
+        const { datesArray, data, goalsArrLength, datesFilled, hoursSleep, workoutsArrLength, positives, workoutComments, additionalComments, showFilters, from, to, email, feeling } = this.state
+        let formatFrom= moment(from).format("DD-MM-YYYY")
+        let formatTo= moment(to).format("DD-MM-YYYY")
         return(
-            <div >
-                <label htmlFor="email">Client email</label>
-                <br/>
-                <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
-                <DayPicker setDatesSelected={this.setDatesSelected}/>
-                <button onClick={() => {this.getClientResults()}}>Submit</button>
-                <PieChart data={goalsArrLength} labels={goalLabels} colours={goalColours} title={goalTitle}/>
-                <LineGraph datesArray={datesArray} data={data[0].data} borderColor={data[0].backgroundColor} />
-                <BarChart datesFilled={datesFilled} hoursSleep={hoursSleep}/>
-                <PieChart data={workoutsArrLength} labels={workoutsLabels} colours={workoutsColours} title={workoutsTitle}/>
-                <div className="positives">
-                    <h3>Positives</h3>
-                    {positives ? positives.map((positive, index) => 
-                        <div key={index}>
-                            <p>{positive[0]}</p>
-                            <p>{positive[1]}</p>
-                        </div>
-                    ) : null}
+            <div>
+                {showFilters ? 
+                <div>
+                    <h1>Reports</h1>
+                    <label htmlFor="email">Client email</label>
+                    <br/>
+                    <input type="email" onChange={(e) => {this.updateEmail(e)}} id="email"></input>
+                    <DayPicker setDatesSelected={this.setDatesSelected}/>
+                    <button onClick={() => {this.getClientResults()}}>Submit</button>
                 </div>
-
-                <div className="workout-comments">
-                    <h3>Workout Comments</h3>
-                    {workoutComments ? workoutComments.map((comment, index) => 
-                        <div key={index}>
-                            <p>{comment[0]}</p>
-                            <p>{comment[1]}</p>
-                        </div>
-                    ) : null}
+                : null }
+                {!showFilters ? 
+                <h3 className="text-center mt-5 w-50 mx-auto">Report for {email} from {formatFrom} to {formatTo}</h3>
+                : null}
+                <h2 className="mt-5 mb-5 text-center">Stats</h2>
+                <div className="d-flex justify-content-center">
+                    <PieChart data={goalsArrLength} labels={goalLabels} colours={goalColours} title={goalTitle} id={"goalsChart"} width={"320"} height={"320"} displayLegend={true}/>
+                    <LineGraph datesArray={datesArray} data={feeling} borderColor={"#3cba9f"} />
                 </div>
+                <div className="d-flex justify-content-center">
+                    <BarChart datesFilled={datesFilled} hoursSleep={hoursSleep}/>
+                    <PieChart data={workoutsArrLength} labels={workoutsLabels} colours={workoutsColours} title={workoutsTitle} id={"workoutsChart"} width={"300"} height={"300"}  displayLegend={true}/>
+                </div>
+                <h2 className="mb-5 mt-5 text-center pt-5">Comments</h2>
+                <div className="d-flex justify-content-center">
+                    <div className="positives p-4 bg-white">
+                        <h3>Positives</h3>
+                        {positives ? positives.map((positive, index) => 
+                            <div key={index}>
+                                <p className="mb-0 font-weight-bold small">{positive[0]}</p>
+                                <p>{positive[1]}</p>
+                            </div>
+                        ) : null}
+                    </div>
 
-                <div className="additional-comments">
-                    <h3>Additional Comments</h3>
-                    {additionalComments ? additionalComments.map((comment, index) => 
-                        <div key={index}>
-                            <p>{comment[0]}</p>
-                            <p>{comment[1]}</p>
-                        </div>
-                    ) : null}
+                    <div className="workout-comments p-4 bg-white">
+                        <h3>Workout Comments</h3>
+                        {workoutComments ? workoutComments.map((comment, index) => 
+                            <div key={index}>
+                                <p className="mb-0 font-weight-bold small">{comment[0]}</p>
+                                <p>{comment[1]}</p>
+                            </div>
+                        ) : null}
+                    </div>
+
+                    <div className="additional-comments p-4 bg-white">
+                        <h3>Additional Comments</h3>
+                        {additionalComments ? additionalComments.map((comment, index) => 
+                            <div key={index}>
+                                <p className="mb-0 font-weight-bold small">{comment[0]}</p>
+                                <p>{comment[1]}</p>
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
 
                 {/* Goal - pie chart, feel - line graph , sleep - bar chart, workouts - list number of workout days and workout types - pie chart maybe?, list positives, list additional workout comments, list additional comments */}

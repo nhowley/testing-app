@@ -28,7 +28,7 @@ export const occupancyDataMonth = [
 export const occupancyDataYear = [
     {
         data: [43, 57],
-        backgroundColor: ["#8e5ea2","#eeeeee"]
+        backgroundColor: ["#3cba9f","#eeeeee"]
     }
 ]
 

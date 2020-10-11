@@ -28,6 +28,7 @@ export default class LineGraph extends Component {
               }]
             },
             options: {
+                legend: { display: this.props.displayLegend },
               title: {
                 display: true,
                 text: this.props.title
@@ -37,9 +38,11 @@ export default class LineGraph extends Component {
     }
     render() {
         return (
-            <div className="mt-4">
+            <div className="mt-4 bg-white p-4">
                 <canvas
-                    id="myChart"
+                    width={this.props.width} 
+                    height={this.props.height}
+                    id={this.props.id}
                     ref={this.chartRef}
                 />
             </div>

@@ -30,20 +30,31 @@ export default class LineGraph extends Component {
             ]
             },
             options: {
-            legend: { display: false },
-            title: {
-                display: true,
-                text: 'Hours of Sleep this week'
-            }
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Hours of Sleep this week'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            stepSize: 0.5,
+                            min: 0,
+
+                        }
+                    }]
+                }
             }
         });
     }
     render() {
         return (
-            <div className="mt-4">
+            <div className="mt-4 bg-white p-4">
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
+                    width="400px"
+                    height="300px"
                 />
             </div>
         )
