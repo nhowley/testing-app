@@ -133,15 +133,15 @@ class App extends Component {
             console.log("sumSkinFolds", sumSkinFolds)
             let skinFoldsSquared = sumSkinFolds * sumSkinFolds
             console.log("skinFoldsAquare", skinFoldsSquared)
-            let bodyDensity = ''
+            let bodyFatPercentage = ''
             if (report.sex === "Female") {
-                bodyDensity = ((0.29669 * sumSkinFolds) - (0.00043 * skinFoldsSquared)) + (0.02963 * Number(report.age)) + 1.4072
+                bodyFatPercentage = (0.29669 * sumSkinFolds) - (0.00043 * skinFoldsSquared) + (0.02963 * Number(report.age)) + 1.4072
             } else {
-                bodyDensity = (0.29288 * sumSkinFolds) - (0.0005  * skinFoldsSquared) + (0.15845 * Number(report.age)) - 5.76377
+                bodyFatPercentage = (0.29288 * sumSkinFolds) - (0.0005  * skinFoldsSquared) + (0.15845 * Number(report.age)) - 5.76377
             }
-            console.log("bpdy Density", bodyDensity)
-            let bodyFatPercentage = (495 / bodyDensity) - 450
-            bodyFat.push(bodyFatPercentage)
+            // console.log("bpdy Density", bodyDensity)
+            // let bodyFatPercentage = (495 / bodyDensity) - 450
+            bodyFat.push(bodyFatPercentage.toFixed(2))
         })
         this.setState({
             bodyFatPercentage: bodyFat
@@ -185,7 +185,7 @@ class App extends Component {
       }
 
     render(){
-        const { positives, struggles, showFilters, from, to, email } = this.state
+        const { positives, struggles, showFilters, from, to, email, datesFilled, weight, bodyFatPercentage } = this.state
         let formatFrom= moment(from).format("DD-MM-YYYY")
         let formatTo= moment(to).format("DD-MM-YYYY")
         return(
@@ -201,11 +201,15 @@ class App extends Component {
                 </div>
                 : null }
                 {!showFilters ? 
-                <h3 className="text-center mt-5 w-50 mx-auto">Report for {email} from {formatFrom} to {formatTo}</h3>
+                <p className="text-center mt-5 w-50 mx-auto font-weight-bold">Report for {email} from {formatFrom} to {formatTo}</p>
                 : null}
-                <h2 className="mt-5 mb-5 text-center">Stats</h2>
+                <h2 className="mt-2 mb-2 text-center">Stats</h2>
                 {/* Weight and body fat in line graph - need to calc body fat from skinfolds, display positives and struggles as lists */}
-                <h2 className="mb-5 mt-5 text-center pt-5">Comments</h2>
+                <div className="d-flex justify-content-center">
+                    <LineGraph datesArray={datesFilled} data={weight} borderColor={"#3cba9f"} title={"Body Weight (kgs)"}/>
+                    <LineGraph datesArray={datesFilled} data={bodyFatPercentage} borderColor={"#3cba9f"} title={"Body Fat Percentage"}/>
+                </div>
+                <h2 className="mb-2 mt-2 text-center pt-5">Comments</h2>
                 <div className="d-flex justify-content-center">
                     <div className="positives p-4 bg-white">
                         <h3>Positives</h3>

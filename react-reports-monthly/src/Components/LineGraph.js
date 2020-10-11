@@ -24,7 +24,7 @@ export default class LineGraph extends Component {
                 labels: this.props.datesArray,
                 datasets: [
                     {
-                        label: "Feeling",
+                        label: this.props.label,
                         data: this.props.data,
                         fill: false,
                         borderColor: this.props.borderColor
@@ -36,16 +36,7 @@ export default class LineGraph extends Component {
                 legend: { display: false },
                 title: {
                     display: true,
-                    text: 'General feeling'
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            stepSize: 1,
-                            min: 0,
-                            max: 5
-                        }
-                    }]
+                    text: this.props.title
                 }
             }
         });
