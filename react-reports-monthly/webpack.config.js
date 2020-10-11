@@ -36,7 +36,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../public/js'),
     publicPath: '/public/js/',
-    filename: 'reports-weekly-bundle.js'
+    filename: 'reports-monthly-bundle.js'
   },
   devServer: {
     port: 3031,
