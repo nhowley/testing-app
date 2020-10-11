@@ -37,6 +37,7 @@ class App extends Component {
         let positives = this.getPositives(clientReportsInRange)
         let struggles = this.getStruggles(clientReportsInRange)
         this.getWeight(clientReportsInRange)
+        this.getBodyFatPercentage(clientReportsInRange)
 
         this.setState({
             allClientReports: allClientReports,
@@ -120,6 +121,31 @@ class App extends Component {
           dt.setDate(dt.getDate() + 1);
         }
         return arr;
+      }
+
+      getBodyFatPercentage = (reports) => {
+        let bodyFat= []
+        reports.forEach(report => {
+            // WOMEN - Body density = (0,29669 x sum of all the skinfolds) – (0,00043 x sum of all of skinfolds squared) + (0,02963 x age) + 1,4072
+            // MEN - Body density = (0,29288 x sum of all the skinfolds) – (0,0005 x sum of all of skinfolds squared) + (0,15845 x age) – 5.76377
+            // Body Fat Percentage (%) = [(495 / Body Density) – 450] x 100
+            let sumSkinFolds = Number(report.thigh) + Number(report.tricep) + Number(report.suprailiac) + Number(report.abdominal)
+            console.log("sumSkinFolds", sumSkinFolds)
+            let skinFoldsSquared = sumSkinFolds * sumSkinFolds
+            console.log("skinFoldsAquare", skinFoldsSquared)
+            let bodyDensity = ''
+            if (report.sex === "Female") {
+                bodyDensity = ((0.29669 * sumSkinFolds) - (0.00043 * skinFoldsSquared)) + (0.02963 * Number(report.age)) + 1.4072
+            } else {
+                bodyDensity = (0.29288 * sumSkinFolds) - (0.0005  * skinFoldsSquared) + (0.15845 * Number(report.age)) - 5.76377
+            }
+            console.log("bpdy Density", bodyDensity)
+            let bodyFatPercentage = (495 / bodyDensity) - 450
+            bodyFat.push(bodyFatPercentage)
+        })
+        this.setState({
+            bodyFatPercentage: bodyFat
+        })
       }
 
       getWeight = (reports) => {
