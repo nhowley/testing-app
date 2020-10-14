@@ -9,12 +9,22 @@ const landingRoute = (app) => {
   }
 
 
-  const reportsRoute = (app) => {
-    app.route('/reports').get((req, res) => {
-      res.render('reports', {
+  const reportsWeeklyRoute = (app) => {
+    app.route('/reports/weekly').get((req, res) => {
+      res.render('reports-weekly', {
         layout: 'default',
         template: 'default-template',
-        title: 'Reports'
+        title: 'Reports Weekly'
+      })
+    })
+  }
+
+  const reportsMonthlyRoute = (app) => {
+    app.route('/reports/monthly').get((req, res) => {
+      res.render('reports-monthly', {
+        layout: 'default',
+        template: 'default-template',
+        title: 'Reports Monthly'
       })
     })
   }
@@ -23,5 +33,6 @@ const landingRoute = (app) => {
 
   module.exports = function routes (app) {
     landingRoute(app)
-    reportsRoute(app)
+    reportsWeeklyRoute(app)
+    reportsMonthlyRoute(app)
   }

@@ -7,14 +7,20 @@ var id = '1T8sGNZOdAFS6-xXir03N098kBacl11ZCE3AWX-XPBu4'; // The Google Sheet ID 
 
 const worksheets = [
   {
+    spreadsheetId: '1T8sGNZOdAFS6-xXir03N098kBacl11ZCE3AWX-XPBu4',
     worksheetId: 'orl2jwq', // about page
     jsonFile: './public/reports/daily.json' // about file
-  }
+  },
+  {
+    spreadsheetId: '1mcAy8IA7jdIxC0fM9G2Fe9gD7lQW-w3CWd3GUHT2BDs',
+    worksheetId: 'oauvmr4', // about page
+    jsonFile: './public/reports/weekly.json' // about file
+  },
 ]
 
 worksheets.forEach((worksheet) => {
   console.log("generating worksheets")
-  https.get('https://spreadsheets.google.com/feeds/list/' + id + '/' + worksheet.worksheetId + '/public/values?alt=json', function(resp) {
+  https.get('https://spreadsheets.google.com/feeds/list/' + worksheet.spreadsheetId + '/' + worksheet.worksheetId + '/public/values?alt=json', function(resp) {
 
   // console.log("resp", resp)
   var body = '';
@@ -89,6 +95,29 @@ worksheets.forEach((worksheet) => {
                 newlanguage = "exerciseIntensity"
             }
 
+            if(newlanguage === "thighskinfoldmm"){
+              newlanguage = "thigh"
+            }
+
+            if(newlanguage === "tricepskinfoldmm"){
+              newlanguage = "tricep"
+            }
+
+            if(newlanguage === "suprailiacskinfoldmm"){
+              newlanguage = "suprailiac"
+            }
+
+            if(newlanguage === "abdominalskinfoldmm"){
+              newlanguage = "abdominal"
+            }
+
+            if(newlanguage === "whathaveyoudonewellthisweek"){
+              newlanguage = "positives"
+            }
+
+            if(newlanguage === "whathaveyoustruggledwiththisweek"){
+              newlanguage = "struggles"
+            }
 
             const languageObject = {[newlanguage]: languageContent}
             languageObjects.push(languageObject)
