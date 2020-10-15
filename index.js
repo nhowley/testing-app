@@ -20,6 +20,7 @@ const hbs = exphbs.create({ /* default config */ })
 app.engine('handlebars', hbs.engine)
 app.set('view engine', 'handlebars')
 app.use(express.static('public'))
+app.use(express.urlencoded({extended: true}))
 
 routes(app)
 db(app)

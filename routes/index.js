@@ -1,3 +1,5 @@
+// var bodyParser = require('body-parser')
+
 const landingRoute = (app) => {
     app.route('/').get((req, res) => {
       res.render('landing', {
@@ -29,10 +31,37 @@ const landingRoute = (app) => {
     })
   }
 
+  const loginRoute = (app) => {
+    app.route('/login').get((req, res) => {
+      res.render('login', {
+        layout: 'default',
+        template: 'default-template',
+        title: 'Login'
+      })
+    })
+  }
+
+  const registerRoute = (app) => {
+    app.route('/register').get((req, res) => {
+      res.render('register', {
+        layout: 'default',
+        template: 'default-template',
+        title: 'Login'
+      })
+    })
+
+    app.route('/register').post((req, res) => {
+      console.log("req.body", req.body)
+      res.send(req.body)
+    })
+  }
+
 
 
   module.exports = function routes (app) {
     landingRoute(app)
     reportsWeeklyRoute(app)
     reportsMonthlyRoute(app)
+    loginRoute(app)
+    registerRoute(app)
   }
