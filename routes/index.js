@@ -39,6 +39,11 @@ const landingRoute = (app) => {
         title: 'Login'
       })
     })
+
+    app.route('/login').post((req, res) => {
+      console.log("req.body", req.body)
+      res.send(req.body)
+    })
   }
 
   const registerRoute = (app) => {
