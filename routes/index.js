@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const db = require('../db/db');
 
+
 const landingRoute = (app) => {
     app.route('/').get((req, res) => {
       res.render('landing', {
@@ -57,9 +58,10 @@ const landingRoute = (app) => {
           }))
 
         const validPassword = bcrypt.compare(password, user.password)
-
+          console.log("user", user)
         if(validPassword){
-          res.send("YAY")
+          req.session.user_id = user[0].user_id;
+          res.redirect("/secret")
         }else {
           res.send("TRY AGAIN")
         }
@@ -94,7 +96,21 @@ const landingRoute = (app) => {
               }
           }))
 
+          req.session.user_id = user.user_id; //not sure if this works - need to find a way to edit this
+
       res.send(hash)
+    })
+  }
+
+  const secretRoute = (app) => {
+    app.route('/secret').get((req, res) => {
+      console.log("user", req.session.user_id)
+      if(!req.session.user_id){
+        res.redirect('/login')
+      }else {
+        res.send("THIS IS A SECRET PAGE")
+      }
+      
     })
   }
 
@@ -104,4 +120,5 @@ const landingRoute = (app) => {
     reportsMonthlyRoute(app)
     loginRoute(app)
     registerRoute(app)
+    secretRoute(app)
   }
