@@ -5,6 +5,7 @@ const Handlebars = require('handlebars')
 const axios = require('axios')
 const cookieParser = require('cookie-parser')
 const port = process.env.PORT || 80
+const bcrypt = require('bcrypt')
 
 const app = express()
 
