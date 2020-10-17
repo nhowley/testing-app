@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const db = require('../db/db');
+const axios = require('axios')
 
 
 const landingRoute = (app) => {
@@ -53,28 +54,26 @@ const landingRoute = (app) => {
 
     app.route('/login').post(async (req, res) => {
       const { password, email } = req.body
-      console.log("req.body", req.body)
+      console.log("email", email)
 
-      let query = `SELECT * FROM users WHERE email='${email}'`
-          // console.log(query)
-          let user = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
-              if (err) {
-                  console.log('🐣')
-                  reject(err)
-              } else {
-                  console.log('🥚')
-                  resolve(Qresults)
-              }
-          }))
+      let user;
+      await axios.get(`http://localhost:3306/find-user/${email}`)
+            .then((res) => {
+              user=res.data
+            })
+            .catch((err) => {
+                console.log(err)
+      })
 
-        const validPassword = bcrypt.compare(password, user.password)
-          console.log("user", user)
-        if(validPassword){
-          req.session.user_id = user[0].user_id;
-          res.redirect("/dashboard")
-        }else {
-          res.send("TRY AGAIN")
-        }
+      const validPassword = bcrypt.compare(password, user.password)
+
+      if(validPassword){
+        req.session.user_id = user[0].user_id;
+        res.redirect("/dashboard")
+      } else {
+        res.send("TRY AGAIN")
+      }
+
     })
   }
 
@@ -98,21 +97,15 @@ const landingRoute = (app) => {
       const hash = await bcrypt.hash(password, 12);
       console.log("req.body", req.body)
 
-      let query = `INSERT INTO users (email,firstName,lastName,phone,password)`
-          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${phone}", "${hash}"`
-          query += `)`
-          // console.log(query)
-          let results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
-              if (err) {
-                  console.log('🐣')
-                  reject(err)
-              } else {
-                  console.log('🥚')
-                  resolve(Qresults)
-              }
-          }))
+      await axios.get(`http://localhost:3306/register-user/${email}?phone=${phone}&firstName=${firstName}&lastName=${lastName}&hash=${hash}`)
+            .then((res) => {
+              console.log("res", res)
+            })
+            .catch((err) => {
+                console.log(err)
+      })
 
-          req.session.user_id = user.user_id; //not sure if this works - need to find a way to edit this
+          // req.session.user_id = user.user_id; //not sure if this works - need to find a way to edit this
 
       res.send(hash)
     })

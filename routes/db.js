@@ -17,6 +17,54 @@ const maintenance = (app) => {
     })
 };
 
+const findUser = (app) => {
+    app.route('/find-user/:email').get(async (req, res) => {
+        console.log("find user")
+        let email = req.params.email
+        console.log("email", email)
+        let query = `SELECT * FROM users WHERE email='${email}'`
+        let user = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
+            if (err) {
+                console.log('🐣')
+                reject(err)
+            } else {
+                console.log('🥚')
+                resolve(Qresults)
+            }
+        }))
+        // console.log("user", user)
+        res.json(user)
+    })
+}; 
+
+const registerUser = (app) => {
+    app.route('/register-user/:email').get(async (req, res) => {
+        // const { hash, email, phone, firstName, lastName } = req.params
+        const email = req.params.email;
+        const hash = req.query.hash;
+        const phone = req.query.phone;
+        const firstName = req.query.firstName;
+        const lastName = req.query.lastName;
+        
+        console.log("register user") 
+        
+        let query = `INSERT INTO users (email,firstName,lastName,phone,password)`
+          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${phone}", "${hash}"`
+          query += `)`
+          let results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
+              if (err) {
+                  console.log('🐣')
+                  reject(err)
+              } else {
+                  console.log('🥚')
+                  resolve(Qresults)
+              }
+          }))
+        // console.log("user", user)
+        res.json(results)
+    })
+}; 
+
 const recommendations = (app) => {
     app.route('/recommendations').get(async (req, res) => {
         console.log("recommendations reached")
@@ -50,4 +98,6 @@ const updateRecommendationsTable = async (recs) => {
 
 module.exports = function routes (app) {
     maintenance(app)
+    findUser(app)
+    registerUser(app)
   }
