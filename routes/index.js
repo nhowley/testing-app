@@ -12,8 +12,18 @@ const landingRoute = (app) => {
     })
   }
 
+  const dashboardRoute = (app) => {
+    app.route('/dashboard').get(requireLogin, (req, res) => {
+      res.render('dashboard', {
+        layout: 'default',
+        template: 'default-template',
+        title: 'Testing APP'
+      })
+    })
+  }
+
   const reportsWeeklyRoute = (app) => {
-    app.route('/reports/weekly').get((req, res) => {
+    app.route('/reports/weekly').get(requireLogin, (req, res) => {
       res.render('reports-weekly', {
         layout: 'default',
         template: 'default-template',
@@ -23,7 +33,7 @@ const landingRoute = (app) => {
   }
 
   const reportsMonthlyRoute = (app) => {
-    app.route('/reports/monthly').get((req, res) => {
+    app.route('/reports/monthly').get(requireLogin, (req, res) => {
       res.render('reports-monthly', {
         layout: 'default',
         template: 'default-template',
@@ -61,12 +71,18 @@ const landingRoute = (app) => {
           console.log("user", user)
         if(validPassword){
           req.session.user_id = user[0].user_id;
-          res.redirect("/secret")
+          res.redirect("/dashboard")
         }else {
           res.send("TRY AGAIN")
         }
     })
   }
+
+  const logoutRoute = (app) => {
+    app.route('/logout').get((req, res) => {
+        req.session.user_id=null;
+        res.redirect("/")
+    })}
 
   const registerRoute = (app) => {
     app.route('/register').get((req, res) => {
@@ -103,15 +119,17 @@ const landingRoute = (app) => {
   }
 
   const secretRoute = (app) => {
-    app.route('/secret').get((req, res) => {
+    app.route('/secret').get(requireLogin, (req, res) => {
       console.log("user", req.session.user_id)
-      if(!req.session.user_id){
-        res.redirect('/login')
-      }else {
         res.send("THIS IS A SECRET PAGE")
-      }
-      
     })
+  }
+
+  const requireLogin = (req, res, next) => {
+    if(!req.session.user_id) {
+      return res.redirect('/login')
+    }
+    next();
   }
 
   module.exports = function routes (app) {
@@ -121,4 +139,6 @@ const landingRoute = (app) => {
     loginRoute(app)
     registerRoute(app)
     secretRoute(app)
+    logoutRoute(app)
+    dashboardRoute(app)
   }
