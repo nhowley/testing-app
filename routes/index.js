@@ -14,11 +14,37 @@ const landingRoute = (app) => {
   }
 
   const dashboardRoute = (app) => {
-    app.route('/dashboard').get(requireCoach, (req, res) => {
+    app.route('/dashboard').get(requireLogin, (req, res) => {
       res.render('dashboard', {
         layout: 'default',
         template: 'default-template',
-        title: 'Testing APP'
+        title: 'Testing APP',
+        isClient: req.session.isClient,
+        isCoach: req.session.isCoach,
+      })
+    })
+  }
+
+  const macroCalcRoute = (app) => {
+    app.route('/macro-calculator').get(requireCoach, (req, res) => {
+      res.render('macro-calculator', {
+        layout: 'default',
+        template: 'default-template',
+        title: 'Macro Calculator',
+        isClient: req.session.isClient,
+        isCoach: req.session.isCoach,
+      })
+    })
+  }
+
+  const clientsRoute = (app) => {
+    app.route('/clients').get(requireCoach, (req, res) => {
+      res.render('clients', {
+        layout: 'default',
+        template: 'default-template',
+        title: 'Clients',
+        isClient: req.session.isClient,
+        isCoach: req.session.isCoach,
       })
     })
   }
@@ -28,17 +54,21 @@ const landingRoute = (app) => {
       res.render('reports-weekly', {
         layout: 'default',
         template: 'default-template',
-        title: 'Reports Weekly'
+        title: 'Reports Weekly',
+        isClient: req.session.isClient,
+        isCoach: req.session.isCoach,
       })
     })
   }
 
   const reportsMonthlyRoute = (app) => {
-    app.route('/reports/monthly').get(requireLogin, (req, res) => {
+    app.route('/reports/monthly').get(requireCoach, (req, res) => {
       res.render('reports-monthly', {
         layout: 'default',
         template: 'default-template',
-        title: 'Reports Monthly'
+        title: 'Reports Monthly',
+        isClient: req.session.isClient,
+        isCoach: req.session.isCoach,
       })
     })
   }
@@ -71,11 +101,12 @@ const landingRoute = (app) => {
         req.session.user_id = user[0].user_id;
         req.session.isClient = user[0].isClient;
         req.session.isCoach = user[0].isCoach;
-        if(user[0].isCoach){
-          res.redirect("/dashboard")
-        } else {
-          res.redirect("/secret")
-        }
+        // if(user[0].isCoach){
+        //   res.redirect("/dashboard")
+        // } else {
+        //   res.redirect("/client-dashboard")
+        // }
+        res.redirect("/dashboard")
         
       } else {
         res.send("TRY AGAIN")
@@ -155,4 +186,6 @@ const landingRoute = (app) => {
     secretRoute(app)
     logoutRoute(app)
     dashboardRoute(app)
+    macroCalcRoute(app)
+    clientsRoute(app)
   }

@@ -5,25 +5,56 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         {{!-- <img src="/img/Emerald-Stay_Logo_H_1.png" /> --}}
+        <a href="/"><p>HOME</p></a>
         
 
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul class="navbar-nav sm-mr-auto mr-lg-2 mt-2 mt-lg-0">
+            {{#if isCoach}}
             <li class="nav-item active">
-                <a class="nav-link" href="/dashboard">Macro Calculator <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/macro-calculator">Macro Calculator <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/reports/weekly">Reports</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/clients">Clients</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Lesson centre</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Programs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Form builder</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            {{else if isClient}}
+            <li class="nav-item">
+                <a class="nav-link" href="#">Food diary</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Lesson centre</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Track</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+
+            {{else}}
             <li class="nav-item">
                 <a class="nav-link" href="/register">Register</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/login">Login</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-            </li>
+            
+            {{/if}}
             </ul>
         </div>
         <img src="/img/user.png" class="avatar"/>
