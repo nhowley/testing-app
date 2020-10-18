@@ -48,8 +48,8 @@ const registerUser = (app) => {
         
         console.log("register user") 
         
-        let query = `INSERT INTO users (email,firstName,lastName,phone,password)`
-          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${phone}", "${hash}"`
+        let query = `INSERT INTO users (email,firstName,lastName,phone,password,isClient,isCoach)`
+          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${phone}", "${hash}", false, true `
           query += `)`
           let results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
               if (err) {

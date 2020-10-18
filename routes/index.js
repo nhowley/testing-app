@@ -14,7 +14,7 @@ const landingRoute = (app) => {
   }
 
   const dashboardRoute = (app) => {
-    app.route('/dashboard').get(requireLogin, (req, res) => {
+    app.route('/dashboard').get(requireCoach, (req, res) => {
       res.render('dashboard', {
         layout: 'default',
         template: 'default-template',
@@ -24,7 +24,7 @@ const landingRoute = (app) => {
   }
 
   const reportsWeeklyRoute = (app) => {
-    app.route('/reports/weekly').get(requireLogin, (req, res) => {
+    app.route('/reports/weekly').get(requireCoach, (req, res) => {
       res.render('reports-weekly', {
         layout: 'default',
         template: 'default-template',
@@ -69,7 +69,14 @@ const landingRoute = (app) => {
 
       if(validPassword){
         req.session.user_id = user[0].user_id;
-        res.redirect("/dashboard")
+        req.session.isClient = user[0].isClient;
+        req.session.isCoach = user[0].isCoach;
+        if(user[0].isCoach){
+          res.redirect("/dashboard")
+        } else {
+          res.redirect("/secret")
+        }
+        
       } else {
         res.send("TRY AGAIN")
       }
@@ -79,7 +86,7 @@ const landingRoute = (app) => {
 
   const logoutRoute = (app) => {
     app.route('/logout').get((req, res) => {
-        req.session.user_id=null;
+        req.session.destroy();
         res.redirect("/")
     })}
 
@@ -112,7 +119,7 @@ const landingRoute = (app) => {
   }
 
   const secretRoute = (app) => {
-    app.route('/secret').get(requireLogin, (req, res) => {
+    app.route('/secret').get(requireClient, (req, res) => {
       console.log("user", req.session.user_id)
         res.send("THIS IS A SECRET PAGE")
     })
@@ -124,6 +131,20 @@ const landingRoute = (app) => {
     }
     next();
   }
+
+  const requireCoach = (req, res, next) => {
+    if(!req.session.isCoach) {
+      return res.redirect('/login')
+    }
+    next();
+  } 
+
+  const requireClient = (req, res, next) => {
+    if(!req.session.isClient) {
+      return res.redirect('/login')
+    }
+    next();
+  } 
 
   module.exports = function routes (app) {
     landingRoute(app)
