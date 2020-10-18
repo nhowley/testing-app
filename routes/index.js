@@ -50,7 +50,27 @@ const landingRoute = (app) => {
         isCoach: req.session.isCoach,
       })
     })
-  }
+
+    app.route('/add-client').post(async (req, res) => {
+      const { email, firstName, lastName, gender } = req.body
+      const randomString = Math.random().toString(36).slice(-8);
+      const hash = await bcrypt.hash(randomString, 12);
+      const coach = req.session.user_id
+      // console.log("req.body", req.body);
+
+      await axios.get(`${HOST_URL}/add-client/${email}?gender=${gender}&firstName=${firstName}&lastName=${lastName}&hash=${hash}&coach=${coach}`)
+            .then((res) => {
+              // console.log("res", res)
+              console.log("randomString", randomString)
+              
+            })
+            .catch((err) => {
+                console.log(err)
+      })
+
+      res.redirect("/clients")
+  })
+}
 
   const reportsWeeklyRoute = (app) => {
     app.route('/reports/weekly').get(requireCoach, (req, res) => {
@@ -136,11 +156,12 @@ const landingRoute = (app) => {
     app.route('/register').post(async (req, res) => {
       const { password, email, phone, firstName, lastName } = req.body
       const hash = await bcrypt.hash(password, 12);
+      
       console.log("req.body", req.body)
 
       await axios.get(`${HOST_URL}/register-user/${email}?phone=${phone}&firstName=${firstName}&lastName=${lastName}&hash=${hash}`)
             .then((res) => {
-              console.log("res", res)
+              // console.log("res", res)
             })
             .catch((err) => {
                 console.log(err)
@@ -160,6 +181,7 @@ const landingRoute = (app) => {
   }
 
   const requireLogin = (req, res, next) => {
+    console.log("req.session.user_id", req.session.user_id)
     if(!req.session.user_id) {
       return res.redirect('/login')
     }
@@ -167,6 +189,7 @@ const landingRoute = (app) => {
   }
 
   const requireCoach = (req, res, next) => {
+    console.log("req.session.user_id", req.session.user_id)
     if(!req.session.isCoach) {
       return res.redirect('/login')
     }

@@ -65,6 +65,36 @@ const registerUser = (app) => {
     })
 }; 
 
+const addClient = (app) => {
+    app.route('/add-client/:email').get(async (req, res) => {
+        const email = req.params.email;
+        const hash = req.query.hash;
+        const gender = req.query.gender;
+        const firstName = req.query.firstName;
+        const lastName = req.query.lastName;
+        const coachId = req.query.coach;
+        console.log("coachId", coachId)
+        console.log("req.session", req.session)
+        
+        console.log("add client") 
+        
+        let query = `INSERT INTO clients (email,firstName,lastName,gender,password,coach_id)`
+          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${gender}", "${hash}", "${coachId}" `
+          query += `)`
+          let results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
+              if (err) {
+                  console.log('🐣')
+                  reject(err)
+              } else {
+                  console.log('🥚')
+                  resolve(Qresults)
+              }
+          }))
+        // console.log("user", user)
+        res.json(results)
+    })
+}; 
+
 const recommendations = (app) => {
     app.route('/recommendations').get(async (req, res) => {
         console.log("recommendations reached")
@@ -100,4 +130,5 @@ module.exports = function routes (app) {
     maintenance(app)
     findUser(app)
     registerUser(app)
+    addClient(app)
   }

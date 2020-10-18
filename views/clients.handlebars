@@ -4,8 +4,23 @@
   <div class="row">
     <div class="col-sm-12 d-flex flex-column align-items-center">
         <h1 class="mb-5 mt-3 text-center">Clients</h1>
-        <a href="#"><button class="btn btn-primary">Add client</button></a>
+        
+        <form action="/add-client" method="POST" class="d-flex flex-column">
+            <label for="email" class="mt-2">Email</label>
+            <input type="text" name="email" id="email">
+
+            <label class="mt-2">First Name</label>
+            <input type="text" name="firstName" id="firstName">
+
+            <label class="mt-2">Last Name</label>
+            <input type="text" name="lastName" id="lastName">
+
+            <label class="mt-2">Gender</label>
+            <input type="text" name="gender" id="gender">
+            <button type="submit" class="btn btn-primary mt-4">Add client</button>
+        </form>
     </div>
+
   </div>
 </div>
 
