@@ -1,6 +1,9 @@
 const bcrypt = require('bcrypt')
 const db = require('../db/db');
-const axios = require('axios')
+const axios = require('axios');
+require('dotenv').config();
+
+const HOST_URL = process.env.HOST;
 
 
 const landingRoute = (app) => {
@@ -87,7 +90,7 @@ const landingRoute = (app) => {
       console.log("email", email)
 
       let user;
-      await axios.get(`http://localhost:3306/find-user/${email}`)
+      await axios.get(`${HOST_URL}/find-user/${email}`)
             .then((res) => {
               user=res.data
             })
@@ -135,7 +138,7 @@ const landingRoute = (app) => {
       const hash = await bcrypt.hash(password, 12);
       console.log("req.body", req.body)
 
-      await axios.get(`http://localhost:3306/register-user/${email}?phone=${phone}&firstName=${firstName}&lastName=${lastName}&hash=${hash}`)
+      await axios.get(`${HOST_URL}/register-user/${email}?phone=${phone}&firstName=${firstName}&lastName=${lastName}&hash=${hash}`)
             .then((res) => {
               console.log("res", res)
             })
