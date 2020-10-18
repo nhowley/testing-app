@@ -5,6 +5,7 @@ const Handlebars = require('handlebars')
 const axios = require('axios')
 const cookieParser = require('cookie-parser')
 const port = process.env.PORT || 80
+const session = require('express-session')
 
 const app = express()
 
@@ -20,6 +21,8 @@ const hbs = exphbs.create({ /* default config */ })
 app.engine('handlebars', hbs.engine)
 app.set('view engine', 'handlebars')
 app.use(express.static('public'))
+app.use(express.urlencoded({extended: true}))
+app.use(session({secret: 'notagoodsecret'}))
 
 routes(app)
 db(app)
