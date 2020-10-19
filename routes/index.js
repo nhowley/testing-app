@@ -105,35 +105,58 @@ const landingRoute = (app) => {
       })
     })
 
-    app.route('/login').post(async (req, res) => {
+    app.route('/login/:userType').post(async (req, res) => {
       const { password, email } = req.body
+      const userType = req.params.userType
       console.log("email", email)
 
-      let user;
-      await axios.get(`${HOST_URL}/find-user/${email}`)
-            .then((res) => {
-              user=res.data
-            })
-            .catch((err) => {
-                console.log(err)
-      })
+      if (userType === "coach"){
+        let user;
+        await axios.get(`${HOST_URL}/find-user/${email}`)
+              .then((res) => {
+                user=res.data
+              })
+              .catch((err) => {
+                  console.log(err)
+        })
 
-      const validPassword = bcrypt.compare(password, user.password)
+        const validPassword = bcrypt.compare(password, user.password)
 
-      if(validPassword){
-        req.session.user_id = user[0].user_id;
-        req.session.isClient = user[0].isClient;
-        req.session.isCoach = user[0].isCoach;
-        // if(user[0].isCoach){
-        //   res.redirect("/dashboard")
-        // } else {
-        //   res.redirect("/client-dashboard")
-        // }
-        res.redirect("/dashboard")
-        
-      } else {
-        res.send("TRY AGAIN")
+        if(validPassword){
+          req.session.user_id = user[0].user_id;
+          req.session.isClient = user[0].isClient;
+          req.session.isCoach = user[0].isCoach;
+          res.redirect("/dashboard")
+          
+        } else {
+          res.send("TRY AGAIN")
+        }
       }
+
+      else {
+        console.log("client login")
+        let user;
+        await axios.get(`${HOST_URL}/find-client/${email}`)
+              .then((res) => {
+                user=res.data
+              })
+              .catch((err) => {
+                  console.log(err)
+        })
+
+        const validPassword = bcrypt.compare(password, user.password)
+
+        if(validPassword){
+          req.session.user_id = user[0].client_id;
+          req.session.isClient = user[0].isClient;
+          req.session.isCoach = user[0].isCoach;
+          res.redirect("/dashboard")
+          
+        } else {
+          res.send("TRY AGAIN")
+        }
+      }
+      
 
     })
   }

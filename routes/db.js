@@ -78,8 +78,8 @@ const addClient = (app) => {
         
         console.log("add client") 
         
-        let query = `INSERT INTO clients (email,firstName,lastName,gender,password,coach_id)`
-          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${gender}", "${hash}", "${coachId}" `
+        let query = `INSERT INTO clients (email,firstName,lastName,gender,password,coach_id,isClient)`
+          query += ` VALUES ("${email}", "${firstName}", "${lastName}", "${gender}", "${hash}", "${coachId}", "true"`
           query += `)`
           let results = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
               if (err) {
@@ -94,6 +94,29 @@ const addClient = (app) => {
         res.json(results)
     })
 }; 
+
+const findClient = (app) => {
+    app.route('/find-client/:email').get(async (req, res) => {
+        console.log("find user")
+        let email = req.params.email
+        console.log("email", email)
+        let query = `SELECT * FROM clients WHERE email='${email}'`
+        let user = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
+            if (err) {
+                console.log('🐣')
+                reject(err)
+            } else {
+                console.log('🥚')
+                resolve(Qresults)
+            }
+        }))
+        // console.log("user", user)
+        res.json(user)
+    })
+}; 
+
+
+
 
 const recommendations = (app) => {
     app.route('/recommendations').get(async (req, res) => {
@@ -131,4 +154,5 @@ module.exports = function routes (app) {
     findUser(app)
     registerUser(app)
     addClient(app)
+    findClient(app)
   }
