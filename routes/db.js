@@ -115,6 +115,25 @@ const findClient = (app) => {
     })
 }; 
 
+const getClients = (app) => {
+    app.route('/get-clients').get(async (req, res) => {
+        console.log("get clients")
+        let coachId = req.session.user_id
+        let query = `SELECT * FROM clients WHERE coach_id='${coachId}'`
+        let clients = await new Promise((resolve, reject) => db.query(query, (err, Qresults) => {
+            if (err) {
+                console.log('🐣')
+                reject(err)
+            } else {
+                console.log('🥚')
+                resolve(Qresults)
+            }
+        }))
+        // console.log("user", user)
+        res.json(clients)
+    })
+}; 
+
 
 
 
@@ -155,4 +174,5 @@ module.exports = function routes (app) {
     registerUser(app)
     addClient(app)
     findClient(app)
+    getClients(app)
   }

@@ -14,96 +14,109 @@ const landingRoute = (app) => {
         title: 'Testing APP'
       })
     })
-  }
+}
 
-  const dashboardRoute = (app) => {
-    app.route('/dashboard').get(requireLogin, (req, res) => {
-      res.render('dashboard', {
-        layout: 'default',
-        template: 'default-template',
-        title: 'Testing APP',
-        isClient: req.session.isClient,
-        isCoach: req.session.isCoach,
-      })
+const dashboardRoute = (app) => {
+  app.route('/dashboard').get(requireLogin, (req, res) => {
+    res.render('dashboard', {
+      layout: 'default',
+      template: 'default-template',
+      title: 'Testing APP',
+      isClient: req.session.isClient,
+      isCoach: req.session.isCoach,
     })
-  }
-
-  const macroCalcRoute = (app) => {
-    app.route('/macro-calculator').get(requireCoach, (req, res) => {
-      res.render('macro-calculator', {
-        layout: 'default',
-        template: 'default-template',
-        title: 'Macro Calculator',
-        isClient: req.session.isClient,
-        isCoach: req.session.isCoach,
-      })
-    })
-  }
-
-  const clientsRoute = (app) => {
-    app.route('/clients').get(requireCoach, (req, res) => {
-      res.render('clients', {
-        layout: 'default',
-        template: 'default-template',
-        title: 'Clients',
-        isClient: req.session.isClient,
-        isCoach: req.session.isCoach,
-      })
-    })
-
-    app.route('/add-client').post(async (req, res) => {
-      const { email, firstName, lastName, gender } = req.body
-      const randomString = Math.random().toString(36).slice(-8);
-      const hash = await bcrypt.hash(randomString, 12);
-      const coach = req.session.user_id
-      // console.log("req.body", req.body);
-
-      await axios.get(`${HOST_URL}/add-client/${email}?gender=${gender}&firstName=${firstName}&lastName=${lastName}&hash=${hash}&coach=${coach}`)
-            .then((res) => {
-              // console.log("res", res)
-              console.log("randomString", randomString)
-              
-            })
-            .catch((err) => {
-                console.log(err)
-      })
-
-      res.redirect("/clients")
   })
 }
 
-  const reportsWeeklyRoute = (app) => {
-    app.route('/reports/weekly').get(requireCoach, (req, res) => {
-      res.render('reports-weekly', {
-        layout: 'default',
-        template: 'default-template',
-        title: 'Reports Weekly',
-        isClient: req.session.isClient,
-        isCoach: req.session.isCoach,
-      })
+const macroCalcRoute = (app) => {
+  app.route('/macro-calculator').get(requireCoach, (req, res) => {
+    res.render('macro-calculator', {
+      layout: 'default',
+      template: 'default-template',
+      title: 'Macro Calculator',
+      isClient: req.session.isClient,
+      isCoach: req.session.isCoach,
     })
-  }
+  })
+}
 
-  const reportsMonthlyRoute = (app) => {
-    app.route('/reports/monthly').get(requireCoach, (req, res) => {
-      res.render('reports-monthly', {
-        layout: 'default',
-        template: 'default-template',
-        title: 'Reports Monthly',
-        isClient: req.session.isClient,
-        isCoach: req.session.isCoach,
-      })
-    })
+const getClients = async () => {
+  try {
+    let clients  = await axios.get(`${HOST_URL}/get-clients`)
+    console.log("clients in getClients", clients)
+    return clients
+  } catch (error) {
+    return console.error(error)
   }
+}
 
-  const loginRoute = (app) => {
-    app.route('/login').get((req, res) => {
-      res.render('login', {
-        layout: 'default',
-        template: 'default-template',
-        title: 'Login'
-      })
+const clientsRoute = (app) => {
+  app.route('/clients').get(requireCoach, async (req, res) => {
+    let clients = await getClients()
+    console.log("clients", clients)
+    res.render('clients', {
+      layout: 'default',
+      template: 'default-template',
+      title: 'Clients',
+      isClient: req.session.isClient,
+      isCoach: req.session.isCoach,
+      clients: clients
     })
+  })
+
+app.route('/add-client').post(async (req, res) => {
+    const { email, firstName, lastName, gender } = req.body
+    const randomString = Math.random().toString(36).slice(-8);
+    const hash = await bcrypt.hash(randomString, 12);
+    const coach = req.session.user_id
+    // console.log("req.body", req.body);
+
+    await axios.get(`${HOST_URL}/add-client/${email}?gender=${gender}&firstName=${firstName}&lastName=${lastName}&hash=${hash}&coach=${coach}`)
+          .then((res) => {
+            // console.log("res", res)
+            console.log("randomString", randomString)
+            
+          })
+          .catch((err) => {
+              console.log(err)
+    })
+
+    res.redirect("/clients")
+  })
+}
+
+const reportsWeeklyRoute = (app) => {
+  app.route('/reports/weekly').get(requireCoach, (req, res) => {
+    res.render('reports-weekly', {
+      layout: 'default',
+      template: 'default-template',
+      title: 'Reports Weekly',
+      isClient: req.session.isClient,
+      isCoach: req.session.isCoach,
+    })
+  })
+}
+
+const reportsMonthlyRoute = (app) => {
+  app.route('/reports/monthly').get(requireCoach, (req, res) => {
+    res.render('reports-monthly', {
+      layout: 'default',
+      template: 'default-template',
+      title: 'Reports Monthly',
+      isClient: req.session.isClient,
+      isCoach: req.session.isCoach,
+    })
+  })
+}
+
+const loginRoute = (app) => {
+  app.route('/login').get((req, res) => {
+    res.render('login', {
+      layout: 'default',
+      template: 'default-template',
+      title: 'Login'
+    })
+  })
 
     app.route('/login/:userType').post(async (req, res) => {
       const { password, email } = req.body
