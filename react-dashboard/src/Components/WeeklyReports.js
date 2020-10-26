@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import axios from "axios"
-import json from "../../public/reports/daily.json";
-import DayPicker from './Components/DayPicker'
+import json from "../../../public/reports/daily.json";
+import DayPicker from './DayPicker'
 import moment from 'moment'
-import LineGraph from "./Components/LineGraph";
-import PieChart from "./Components/PieChart";
-import BarChart from "./Components/BarChart";
-import { goalLabels, goalColours, goalTitle, workoutsLabels, workoutsColours, workoutsTitle } from './chartData'
+import LineGraph from "./LineGraph";
+import PieChart from "./PieChart";
+import BarChart from "./BarChart";
+import { goalLabels, goalColours, goalTitle, workoutsLabels, workoutsColours, workoutsTitle } from '../chartData'
 
-import { occupancyDataMonth } from './MockData'
+import { occupancyDataMonth } from '../MockData'
 
 class App extends Component {
     constructor(props) {

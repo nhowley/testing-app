@@ -29,7 +29,7 @@ const dashboardRoute = (app) => {
 }
 
 const macroCalcRoute = (app) => {
-  app.route('/macro-calculator').get(requireCoach, (req, res) => {
+  app.route('/app/macro-calculator').get(requireCoach, (req, res) => {
     res.render('macro-calculator', {
       layout: 'default',
       template: 'default-template',
@@ -86,7 +86,7 @@ app.route('/add-client').post(async (req, res) => {
 }
 
 const reportsWeeklyRoute = (app) => {
-  app.route('/reports/weekly').get(requireCoach, (req, res) => {
+  app.route('/app/reports/weekly').get(requireCoach, (req, res) => {
     res.render('reports-weekly', {
       layout: 'default',
       template: 'default-template',
@@ -98,7 +98,7 @@ const reportsWeeklyRoute = (app) => {
 }
 
 const reportsMonthlyRoute = (app) => {
-  app.route('/reports/monthly').get(requireCoach, (req, res) => {
+  app.route('/app/reports/monthly').get(requireCoach, (req, res) => {
     res.render('reports-monthly', {
       layout: 'default',
       template: 'default-template',
@@ -110,13 +110,13 @@ const reportsMonthlyRoute = (app) => {
 }
 
 const loginRoute = (app) => {
-  app.route('/login').get((req, res) => {
-    res.render('login', {
-      layout: 'default',
-      template: 'default-template',
-      title: 'Login'
-    })
-  })
+  // app.route('/app/login').get((req, res) => {
+  //   res.render('login', {
+  //     layout: 'default',
+  //     template: 'default-template',
+  //     title: 'Login'
+  //   })
+  // })
 
     app.route('/login/:userType').post(async (req, res) => {
       const { password, email } = req.body

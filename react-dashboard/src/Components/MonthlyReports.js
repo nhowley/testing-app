@@ -1,15 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios"
-import json from "../../public/reports/weekly.json";
-import DayPicker from './Components/DayPicker'
+import json from "../../../public/reports/weekly.json";
+import DayPicker from './DayPicker'
 import moment from 'moment'
-import LineGraph from "./Components/LineGraph";
-import PieChart from "./Components/PieChart";
-import BarChart from "./Components/BarChart";
+import LineGraph from "./LineGraph2";
 
-import { occupancyDataMonth } from './MockData'
+import { occupancyDataMonth } from '../MockData'
 
-class App extends Component {
+class MonthlyReports extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -237,4 +235,4 @@ class App extends Component {
 }
 
 
-export default App
+export default MonthlyReports

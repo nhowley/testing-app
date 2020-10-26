@@ -1,7 +1,11 @@
 import React, { Component } from "react";
-import '../css/dashboard.css'
+// import '../css/dashboard.css'
 import axios from "axios"
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import MacroCalculator from "./Components/MacroCalculator";
+import WeeklyReports from "./Components/WeeklyReports";
+import MonthlyReports from "./Components/MonthlyReports";
+import Login from "./Components/Login";
 
 class App extends Component {
     constructor(props) {
@@ -18,19 +22,19 @@ class App extends Component {
 
 
     render(){
-        // const { cats } = this.state
-        // let catsArr = []
-
-        // for (let i = 0; i < cats.length; i++) {
-        //     catsArr.push(<p key={i}>{cats[i].name} is {cats[i].age}</p>)
-        //     console.log("cats", cats)
-        // }
-
         return(
-            <div >
-               <MacroCalculator />
-               
-            </div>
+            // <BrowserRouter>
+                <div className="App">
+                    {/* <Navbar /> */}
+                    {/* <Switch>
+                        <Route path="/app/macro-calculator" component={MacroCalculator} />
+                        <Route path="/app/reports/weekly'" component={WeeklyReports} />
+                        <Route path="/app/reports/monthly'" component={MonthlyReports} />
+                        <Route path="/app/login'" component={Login} />
+                    </Switch> */}
+                    <Login />
+                </div>
+            // </BrowserRouter> 
         );
     }
 }
