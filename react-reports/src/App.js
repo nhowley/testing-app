@@ -93,7 +93,8 @@ class App extends Component {
 
         Object.entries(reports).forEach(([number, report]) => {
            let reportArr = Object.values(report)
-           reportsInDateRange = reportArr.filter(element => this.state.datesSelected.includes(moment(element).format("YYYY-MM-DD")));
+           console.log("reportArr", reportArr)
+           reportsInDateRange = reportArr.filter(element => this.state.datesSelected.includes(moment(element.dateofreview).format("YYYY-MM-DD")));
             console.log("reportsInDateRange", reportsInDateRange)
         })
 

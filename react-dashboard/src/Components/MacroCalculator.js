@@ -144,6 +144,7 @@ class MacroCalculator extends Component {
     }
 
     calculateMaintenance = (calories) => {
+        console.log("calories maintenance", calories)
         let weight = this.state.weightPounds
         calories.forEach(range => {
             if (weight > range.bodyweight_min && weight < range.bodyweight_max){
@@ -301,9 +302,11 @@ class MacroCalculator extends Component {
     calcFatLossMacros = async (proteinMultipliers, carbMultipliers, fatMultipliers, calories) => {
         console.log("fatlossmacrosreached")
         console.log("fatMultipliters", fatMultipliers)
+        
         let proteinFatLoss = await this.calcMaintenanceProtein(proteinMultipliers)
         let fatFatLoss =  await this.calcFatLossFat(fatMultipliers)
         console.log("fatFatloss", fatFatLoss)
+        console.log("calories", calories)
         this.setState({
             proteinFatLoss: proteinFatLoss,
             fatFatLoss: fatFatLoss,
